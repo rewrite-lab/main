@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rewrite Lab | Elite Web Security Research</title>
+    <!-- High-end display font (Clash Display) and body font (Pretendard) -->
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-base: #030303;
+        --surface-color: #0a0a0a;
+        --accent: #ccff00; /* Acid green accent */
+        --danger: #ff0033; /* Red for vulnerability highlights */
+        --text-primary: #ffffff; /* Pure white */
+        --text-secondary: #a1a1aa;
+        --border-light: rgba(255, 255, 255, 0.12);
+
+        --font-display: "Clash Display", sans-serif;
+        --font-body: "Pretendard", sans-serif;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: var(--bg-base);
+        color: var(--text-primary);
+        font-family: var(--font-body);
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        line-height: 1.6;
+      }
+
+      ::selection {
+        background: var(--accent);
+        color: #000;
+      }
+
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg-base);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #333;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--accent);
+      }
+
+      /* --- Navigation --- */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 2.5rem 5vw;
+        z-index: 1000;
+        background: linear-gradient(to bottom, rgba(3, 3, 3, 0.9), transparent);
+      }
+
+      .logo {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        text-decoration: none;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 3rem;
+      }
+      .nav-links a {
+        font-family: var(--font-display);
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--text-primary);
+        text-decoration: none;
+        text-transform: uppercase;
+        transition: color 0.3s ease;
+      }
+      .nav-links a:hover {
+        color: var(--accent);
+      }
+
+      /* --- Hero Section --- */
+      #hero {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 5vw;
+        overflow: hidden;
+      }
+
+      #hero-canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 10;
+        width: 100%;
+        pointer-events: none;
+      }
+
+      .hero-title {
+        font-family: var(--font-display);
+        font-size: clamp(5rem, 14vw, 15rem);
+        font-weight: 700;
+        line-height: 0.85;
+        text-transform: uppercase;
+        letter-spacing: -2px;
+        margin-bottom: 2rem;
+        color: var(--text-primary);
+      }
+      .hero-title span {
+        color: transparent;
+        -webkit-text-stroke: 2px var(--text-primary);
+      }
+
+      .hero-bottom-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: end;
+        border-top: 1px solid var(--border-light);
+        padding-top: 2rem;
+        pointer-events: auto;
+      }
+
+      .hero-slogan {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        word-break: keep-all;
+      }
+      .hero-desc {
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+      }
+
+      /* --- Generic Section Styles --- */
+      section {
+        padding: 15vh 5vw;
+        position: relative;
+        z-index: 5;
+        background: var(--bg-base);
+      }
+
+      .section-tag {
+        font-family: var(--font-display);
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--accent);
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+        display: block;
+      }
+
+      .section-title {
+        font-family: var(--font-display);
+        font-size: clamp(3rem, 7vw, 6rem);
+        font-weight: 600;
+        color: var(--text-primary);
+        line-height: 1;
+        margin-bottom: 5rem;
+        text-transform: uppercase;
+      }
+
+      /* --- About Section --- */
+      .about-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 5vw;
+      }
+      .huge-text {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1.5;
+        word-break: keep-all;
+      }
+      .huge-text span {
+        color: var(--accent);
+      }
+      .about-details {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        line-height: 1.8;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .stat-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-top: 3rem;
+        border-top: 1px solid var(--border-light);
+        padding-top: 2rem;
+      }
+      .stat-item h4 {
+        font-family: var(--font-display);
+        font-size: 2.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      .stat-item p {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+      }
+
+      /* --- Platforms Section --- */
+      .platform-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+      }
+      .card {
+        background: var(--surface-color);
+        border: 1px solid var(--border-light);
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        min-height: 400px;
+        clip-path: polygon(
+          0 0,
+          100% 0,
+          100% calc(100% - 40px),
+          calc(100% - 40px) 100%,
+          0 100%
+        );
+        transition: border-color 0.4s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .card:hover {
+        border-color: var(--accent);
+      }
+      .card-content {
+        padding: 5vw;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .card-title {
+        font-family: var(--font-display);
+        font-size: clamp(2.5rem, 4vw, 4rem);
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      .card-desc {
+        font-size: 1.15rem;
+        color: var(--text-secondary);
+        margin: 2rem 0 3rem 0;
+        line-height: 1.7;
+      }
+
+      .btn {
+        align-self: flex-start;
+        padding: 1.2rem 3rem;
+        background: var(--text-primary);
+        color: var(--bg-base);
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        text-decoration: none;
+        clip-path: polygon(
+          0 0,
+          100% 0,
+          100% calc(100% - 15px),
+          calc(100% - 15px) 100%,
+          0 100%
+        );
+        transition: background 0.3s, color 0.3s;
+      }
+      .btn:hover {
+        background: var(--accent);
+        color: var(--bg-base);
+      }
+
+      .card-visual {
+        position: relative;
+        border-left: 1px solid var(--border-light);
+        background: var(--surface-color);
+        overflow: hidden;
+      }
+      .card-visual canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      /* --- Team Section --- */
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+        align-items: stretch;
+      }
+      .team-member {
+        display: grid;
+        grid-template-columns: 90px minmax(0, 1fr);
+        gap: 1.5rem;
+        padding: 1.75rem;
+        background: var(--surface-color);
+        border: 1px solid var(--border-light);
+        min-height: 220px;
+        height: 100%;
+        align-items: start;
+        clip-path: polygon(
+          0 0,
+          100% 0,
+          100% calc(100% - 20px),
+          calc(100% - 20px) 100%,
+          0 100%
+        );
+        transition: all 0.3s ease;
+      }
+      .team-member:hover {
+        border-color: var(--accent);
+        transform: translateY(-5px);
+      }
+
+      .t-profile {
+        flex-shrink: 0;
+        width: 90px;
+        height: 90px;
+        background: #1a1a1a;
+        clip-path: polygon(
+          10px 0,
+          100% 0,
+          100% calc(100% - 10px),
+          calc(100% - 10px) 100%,
+          0 100%,
+          0 10px
+        );
+        overflow: hidden;
+        position: relative;
+      }
+      .t-profile img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+      }
+      .team-member:hover .t-profile img {
+        transform: scale(1.04);
+      }
+
+      .t-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        min-width: 0;
+        gap: 0.55rem;
+      }
+      .t-role {
+        font-family: var(--font-display);
+        font-size: 0.8rem;
+        color: var(--accent);
+        text-transform: uppercase;
+        line-height: 1.25;
+      }
+      .t-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1.1;
+        word-break: break-word;
+      }
+      .t-quote {
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+        font-style: italic;
+        line-height: 1.4;
+        margin-top: 0.1rem;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+      .t-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-top: auto;
+        padding-top: 0.4rem;
+      }
+      .t-tag {
+        font-size: 0.75rem;
+        color: #888;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 0.2rem 0.6rem;
+        border-radius: 2px;
+      }
+
+      /* --- Sponsors Section --- */
+      .marquee-container {
+        width: 100%;
+        overflow: hidden;
+        padding: 4rem 0;
+        border-top: 1px solid var(--border-light);
+        border-bottom: 1px solid var(--border-light);
+        margin-bottom: 5rem;
+      }
+      .marquee-track {
+        display: flex;
+        gap: 6rem;
+        width: max-content;
+        animation: marquee 25s linear infinite;
+      }
+      .sponsor-placeholder {
+        font-family: var(--font-display);
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.15);
+        text-transform: uppercase;
+      }
+      @keyframes marquee {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* QnA */
+      .qna-container {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      .qna-item {
+        border-bottom: 1px solid var(--border-light);
+        padding: 2.5rem 0;
+      }
+      .qna-q {
+        font-family: var(--font-display);
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+      }
+      .qna-a {
+        font-size: 1.15rem;
+        color: var(--text-secondary);
+        line-height: 1.8;
+        padding-left: 2rem;
+        border-left: 2px solid var(--accent);
+      }
+      .qna-a strong {
+        color: var(--text-primary);
+        font-weight: 700;
+      }
+
+      footer {
+        padding: 5rem 5vw;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid var(--border-light);
+        font-family: var(--font-display);
+      }
+      .footer-logo {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+      .footer-copy {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+      .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 1024px) {
+        .hero-bottom-grid {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+        }
+        .about-grid {
+          grid-template-columns: 1fr;
+          gap: 3rem;
+        }
+        .card {
+          grid-template-columns: 1fr;
+        }
+        .card-visual {
+          height: 300px;
+          border-left: none;
+          border-top: 1px solid var(--border-light);
+        }
+        .nav-links {
+          display: none;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .team-grid {
+          grid-template-columns: 1fr;
+          gap: 1.25rem;
+        }
+        .team-member {
+          grid-template-columns: 72px minmax(0, 1fr);
+          gap: 1rem;
+          padding: 1.25rem;
+          min-height: 0;
+        }
+        .t-profile {
+          width: 72px;
+          height: 72px;
+        }
+        .t-name {
+          font-size: 1.25rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="#" class="logo">REWRITE LAB</a>
+      <div class="nav-links">
+        <a href="#about">About</a>
+        <a href="#platforms">Platforms</a>
+        <a href="#team">Team</a>
+        <a href="#sponsor">Sponsors</a>
+      </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section id="hero">
+      <canvas id="hero-canvas"></canvas>
+      <div class="hero-content">
+        <h1 class="hero-title">REWRITE<br /><span>LAB</span></h1>
+        <div class="hero-bottom-grid">
+          <div class="hero-slogan">
+            "We make what we learn through research understandable to everyone,
+            <br />and by sharing it transparently, we build a deeper web hacking
+            ecosystem."
+          </div>
+          <div class="hero-desc">
+            Global high-tier hackers building a bidirectional growth community
+            through deep, uncompromised web security research.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about">
+      <span class="section-tag">01. Identity</span>
+      <h2 class="section-title">Beyond The Surface</h2>
+
+      <div class="about-grid">
+        <div class="huge-text reveal">
+          We avoid shallow summaries<br />and abstract explanations.<br /><br />
+          We dig into
+          <span>even the smallest issue others overlook</span> to clearly
+          analyze the full complexity of hacking.
+        </div>
+        <div class="about-details reveal" style="transition-delay: 0.2s">
+          <p>
+            Rewrite Lab is a pure research team made up of web security
+            specialists proven through repeated results in globally recognized
+            competitions. Our research aims to raise the baseline of shared
+            knowledge and build an ecosystem where web hackers around the world
+            can access high-quality information and grow together.
+          </p>
+          <div class="stat-grid">
+            <div class="stat-item">
+              <h4>HIGH-TIER</h4>
+              <p>Global Hackers</p>
+            </div>
+            <div class="stat-item">
+              <h4>100%</h4>
+              <p>Transparent Sharing</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLATFORMS SECTION -->
+    <section id="platforms">
+      <span class="section-tag">02. Ecosystem</span>
+      <h2 class="section-title">Our Platforms</h2>
+
+      <div class="platform-cards">
+        <!-- RESEARCH CARD -->
+        <div class="card reveal">
+          <div class="card-content">
+            <h3 class="card-title">RESEARCH</h3>
+            <p class="card-desc">
+              We break down advanced web hacking techniques, vulnerability
+              analysis, and deeper research in a way that stays accessible
+              without losing rigor. By publishing clear reports on knowledge
+              that used to stay within a small circle, we make learning
+              transparent and available to anyone.
+            </p>
+            <a
+              href="https://research.rewritelab.org"
+              target="_blank"
+              class="btn"
+              >Explore Research</a
+            >
+          </div>
+          <div class="card-visual">
+            <!-- 3D infinity-orbit canvas -->
+            <canvas id="research-canvas"></canvas>
+          </div>
+        </div>
+
+        <!-- WARGAME CARD -->
+        <div class="card reveal">
+          <div class="card-content">
+            <h3 class="card-title">WARGAME</h3>
+            <p class="card-desc">
+              Our researchers, backed by extensive competitive and community
+              experience, build validated web hacking challenges designed to
+              sharpen problem-solving ability and technical insight, and we run
+              an in-house platform open to everyone.
+            </p>
+            <a href="https://wargame.rewritelab.org" target="_blank" class="btn"
+              >Enter Wargame</a
+            >
+          </div>
+          <div class="card-visual">
+            <!-- Target scanning and discovery canvas -->
+            <canvas id="wargame-canvas"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEAM SECTION -->
+    <section id="team">
+      <span class="section-tag">03. Architects</span>
+      <h2 class="section-title">The Researchers</h2>
+
+      <div class="team-grid" id="team-container">
+        <!-- Injected by JavaScript -->
+      </div>
+    </section>
+
+    <!-- SPONSOR & FAQ SECTION -->
+    <section id="sponsor">
+      <span class="section-tag">04. Alliance</span>
+      <h2 class="section-title">Support & FAQ</h2>
+
+      <div class="marquee-container reveal">
+        <div class="marquee-track">
+          <div class="sponsor-placeholder">PARTNER LOGO</div>
+          <div class="sponsor-placeholder">SPONSOR BRAND</div>
+          <div class="sponsor-placeholder">GLOBAL TECH</div>
+          <div class="sponsor-placeholder">SECURITY LAB</div>
+          <div class="sponsor-placeholder">PARTNER LOGO</div>
+          <div class="sponsor-placeholder">PARTNER LOGO</div>
+          <div class="sponsor-placeholder">SPONSOR BRAND</div>
+          <div class="sponsor-placeholder">GLOBAL TECH</div>
+          <div class="sponsor-placeholder">SECURITY LAB</div>
+          <div class="sponsor-placeholder">PARTNER LOGO</div>
+        </div>
+      </div>
+
+      <div class="qna-container">
+        <div class="qna-item reveal">
+          <div class="qna-q">Is Rewrite Lab a for-profit security company?</div>
+          <div class="qna-a">
+            <strong>No.</strong> We are not a profit-driven company. Rewrite Lab
+            was founded by top web hackers from around the world who voluntarily
+            came together to push the limits of security research and
+            transparently share that knowledge with the community. We are a
+            <strong>pure research lab</strong>.
+          </div>
+        </div>
+        <div class="qna-item reveal">
+          <div class="qna-q">How are sponsorship funds used?</div>
+          <div class="qna-a">
+            Every contribution is used transparently to support high-quality
+            research content, maintenance of our public wargame infrastructure,
+            and seminars and conferences that help grow the global web hacking
+            community, building a
+            <strong>sustainable cycle of knowledge sharing</strong>.
+          </div>
+        </div>
+        <div class="qna-item reveal">
+          <div class="qna-q">
+            Do you recruit team members on a rolling basis?
+          </div>
+          <div class="qna-a">
+            We do not recruit on a rolling basis. In general, we open recruiting
+            twice a year, once in the first half and once later in the year. We
+            are <strong>not currently recruiting</strong>
+            additional researchers.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-logo">REWRITE LAB</div>
+      <div class="footer-copy">
+        © 2026 Rewrite Lab. Transparently sharing what we learn.
+      </div>
+    </footer>
+
+    <script>
+      // ============================================================================
+      // 1. Hero Canvas: globe form, staggered pop-in, real-time links, and clearer visibility
+      // ============================================================================
+      const heroCanvas = document.getElementById("hero-canvas");
+      const hCtx = heroCanvas.getContext("2d");
+      let hWidth, hHeight;
+
+      function resizeHero() {
+        hWidth = heroCanvas.width = window.innerWidth;
+        hHeight = heroCanvas.height = window.innerHeight;
+      }
+      window.addEventListener("resize", resizeHero);
+      resizeHero();
+
+      const numNodes = 350;
+      const nodes = [];
+      let heroFrame = 0;
+      let globRotY = 0;
+      let globRotX = 0.2;
+
+      const lightDir = { x: -1, y: -1, z: 1 };
+      const lightLen = Math.sqrt(
+        lightDir.x ** 2 + lightDir.y ** 2 + lightDir.z ** 2
+      );
+      lightDir.x /= lightLen;
+      lightDir.y /= lightLen;
+      lightDir.z /= lightLen;
+
+      // Distribute nodes on the sphere and assign random appearance delays
+      for (let i = 0; i < numNodes; i++) {
+        const phi = Math.acos(1 - (2 * (i + 0.5)) / numNodes);
+        const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+        nodes.push({
+          x: Math.cos(theta) * Math.sin(phi),
+          y: Math.sin(theta) * Math.sin(phi),
+          z: Math.cos(phi),
+          delay: Math.random() * 280, // Spread timing out for a slower reveal
+          scale: 0,
+          opacity: 0,
+        });
+      }
+
+      function drawHero() {
+        hCtx.clearRect(0, 0, hWidth, hHeight);
+        heroFrame++;
+        globRotY -= 0.0018;
+
+        const cx = hWidth * 0.75;
+        const cy = hHeight * 0.45;
+        const radius = Math.min(hWidth, hHeight) * 0.4;
+
+        const cosY = Math.cos(globRotY);
+        const sinY = Math.sin(globRotY);
+        const cosX = Math.cos(globRotX);
+        const sinX = Math.sin(globRotX);
+
+        const projNodes = [];
+
+        for (let i = 0; i < numNodes; i++) {
+          let n = nodes[i];
+
+          // Once its delay passes, let the node fade and scale in gradually
+          if (heroFrame > n.delay) {
+            n.scale += (1 - n.scale) * 0.08;
+            n.opacity = Math.min(1, n.opacity + 0.02);
+          }
+
+          let x1 = n.x * cosY - n.z * sinY;
+          let z1 = n.z * cosY + n.x * sinY;
+          let y1 = n.y * cosX - z1 * sinX;
+          let z2 = z1 * cosX + n.y * sinX;
+
+          // Keep the minimum brightness higher so the back side stays visible
+          let dotProduct = x1 * lightDir.x + y1 * lightDir.y + z2 * lightDir.z;
+          let brightness = Math.max(0.35, dotProduct * 0.65 + 0.6);
+
+          let p = 2.5 / (2.5 + z2);
+
+          projNodes.push({
+            sx: cx + x1 * radius * p,
+            sy: cy + y1 * radius * p,
+            sz: z2,
+            p: p,
+            scale: n.scale,
+            opacity: n.opacity,
+            bright: brightness,
+          });
+        }
+
+        // Connect nodes in real time once both have appeared enough
+        for (let i = 0; i < numNodes; i++) {
+          for (let j = i + 1; j < numNodes; j++) {
+            const n1 = projNodes[i];
+            const n2 = projNodes[j];
+            if (n1.opacity < 0.2 || n2.opacity < 0.2) continue; // Draw links only after a visible reveal
+
+            const dx = n1.sx - n2.sx;
+            const dy = n1.sy - n2.sy;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < radius * 0.35) {
+              const depthAlpha = 1 - dist / (radius * 0.35);
+              const avgBright = (n1.bright + n2.bright) / 2;
+              // Keep overall lines a bit brighter for clearer visibility
+              const lineOpacity =
+                depthAlpha *
+                Math.min(n1.opacity, n2.opacity) *
+                avgBright *
+                (n1.sz > 0 ? 0.3 : 1.0);
+
+              if (lineOpacity > 0.05) {
+                hCtx.beginPath();
+                hCtx.moveTo(n1.sx, n1.sy);
+                hCtx.lineTo(n2.sx, n2.sy);
+                hCtx.strokeStyle = `rgba(204, 255, 0, ${lineOpacity})`;
+                hCtx.lineWidth = 1;
+                hCtx.stroke();
+              }
+            }
+          }
+        }
+
+        // Render nodes
+        for (let i = 0; i < numNodes; i++) {
+          const n = projNodes[i];
+          if (n.opacity > 0) {
+            hCtx.beginPath();
+            // Apply the scale-up animation during reveal
+            hCtx.arc(n.sx, n.sy, n.p * 1.5 * n.scale, 0, Math.PI * 2);
+
+            // Mix neon green and white tones based on light direction
+            const finalAlpha = n.opacity * n.bright * (n.sz > 0 ? 0.5 : 1);
+            hCtx.fillStyle = `rgba(204, 255, 0, ${finalAlpha})`;
+            if (n.bright > 0.8) {
+              hCtx.shadowBlur = 10;
+              hCtx.shadowColor = "#CCFF00";
+              hCtx.fillStyle = `rgba(255, 255, 255, ${finalAlpha})`; // Brightest faces get a white glow
+            } else {
+              hCtx.shadowBlur = 0;
+            }
+            hCtx.fill();
+          }
+        }
+        hCtx.shadowBlur = 0;
+        requestAnimationFrame(drawHero);
+      }
+      drawHero();
+
+      // ============================================================================
+      // 2. Research Canvas: a laser slowly moving along a 3D infinity orbit
+      // ============================================================================
+      const resCanvas = document.getElementById("research-canvas");
+      const rCtx = resCanvas.getContext("2d");
+
+      function resizeRes() {
+        resCanvas.width = resCanvas.parentElement.clientWidth;
+        resCanvas.height = resCanvas.parentElement.clientHeight;
+      }
+      window.addEventListener("resize", resizeRes);
+      setTimeout(resizeRes, 100);
+
+      let rTime = 0;
+      let orbitRot = 0;
+      const resTrail = [];
+      const maxResTrail = 35;
+
+      function drawResearch() {
+        // Trail effect
+        rCtx.fillStyle = "rgba(10, 10, 10, 0.08)";
+        rCtx.fillRect(0, 0, resCanvas.width, resCanvas.height);
+
+        const cx = resCanvas.width / 2;
+        const cy = resCanvas.height / 2;
+        const r = Math.min(cx, cy) * 0.7;
+
+        rTime += 0.012; // Laser movement speed, kept intentionally slow
+        orbitRot += 0.003; // Overall 3D orbit rotation speed, kept intentionally slow
+
+        // Infinity / figure-eight curve (Lissajous)
+        const lx = Math.sin(rTime) * r;
+        const ly = Math.sin(rTime) * Math.cos(rTime) * r; // Creates the crossover
+        const lz = Math.cos(rTime) * (r * 0.4); // Depth for the 3D feel
+
+        const cosO = Math.cos(orbitRot);
+        const sinO = Math.sin(orbitRot);
+
+        // Rotate on the Y axis
+        let fx = lx * cosO - lz * sinO;
+        let fz = lz * cosO + lx * sinO;
+
+        // Add a slight tilt on the X axis
+        const tilt = 0.6;
+        let fy = ly * Math.cos(tilt) - fz * Math.sin(tilt);
+        let finalZ = fz * Math.cos(tilt) + ly * Math.sin(tilt);
+
+        let scale = 300 / (300 + finalZ);
+        const pointerX = cx + fx * scale;
+        const pointerY = cy + fy * scale;
+
+        resTrail.push({ x: pointerX, y: pointerY, scale });
+        if (resTrail.length > maxResTrail) {
+          resTrail.shift();
+        }
+
+        for (let i = 1; i < resTrail.length; i++) {
+          const prev = resTrail[i - 1];
+          const curr = resTrail[i];
+          const progress = i / (resTrail.length - 1);
+
+          rCtx.beginPath();
+          rCtx.moveTo(prev.x, prev.y);
+          rCtx.lineTo(curr.x, curr.y);
+          rCtx.strokeStyle = `rgba(204, 255, 0, ${0.04 + progress * 0.28})`;
+          rCtx.lineWidth = 1 + progress * 2.6;
+          rCtx.stroke();
+        }
+
+        // Laser beam dot
+        rCtx.beginPath();
+        rCtx.arc(pointerX, pointerY, 5 * scale, 0, Math.PI * 2);
+        rCtx.fillStyle = "#CCFF00";
+        rCtx.shadowBlur = 20;
+        rCtx.shadowColor = "#CCFF00";
+        rCtx.fill();
+        rCtx.shadowBlur = 0;
+
+        // Faint background infinity orbit
+        rCtx.beginPath();
+        for (let i = 0; i < Math.PI * 2; i += 0.1) {
+          let px = Math.sin(i) * r;
+          let py = Math.sin(i) * Math.cos(i) * r;
+          let pz = Math.cos(i) * (r * 0.4);
+
+          let rx = px * cosO - pz * sinO;
+          let rz = pz * cosO + px * sinO;
+          let ry = py * Math.cos(tilt) - rz * Math.sin(tilt);
+          let rfz = rz * Math.cos(tilt) + py * Math.sin(tilt);
+          let ps = 300 / (300 + rfz);
+
+          if (i === 0) rCtx.moveTo(cx + rx * ps, cy + ry * ps);
+          else rCtx.lineTo(cx + rx * ps, cy + ry * ps);
+        }
+        rCtx.strokeStyle = "rgba(255, 255, 255, 0.04)";
+        rCtx.lineWidth = 1;
+        rCtx.stroke();
+
+        requestAnimationFrame(drawResearch);
+      }
+      drawResearch();
+
+      // ============================================================================
+      // 3. Wargame Canvas: slowly scan circular targets as they appear over time
+      // ============================================================================
+      const wgCanvas = document.getElementById("wargame-canvas");
+      const wCtx = wgCanvas.getContext("2d");
+
+      function resizeWg() {
+        wgCanvas.width = wgCanvas.parentElement.clientWidth;
+        wgCanvas.height = wgCanvas.parentElement.clientHeight;
+      }
+      window.addEventListener("resize", resizeWg);
+      setTimeout(resizeWg, 100);
+
+      const wgNodes = [];
+      let wgFrame = 0;
+
+      for (let i = 0; i < 30; i++) {
+        wgNodes.push({
+          x: 0.1 + Math.random() * 0.8, // Keep horizontal padding
+          y: 0.1 + Math.random() * 0.8,
+          isTarget: i === 7 || i === 22, // Two red vulnerability targets
+          pulse: 0,
+          delay: Math.random() * 200, // Staggered appearance delay
+          opacity: 0,
+        });
+      }
+
+      let scanY = -0.2;
+      let scanDir = 1;
+
+      function drawWargame() {
+        wCtx.clearRect(0, 0, wgCanvas.width, wgCanvas.height);
+        wgFrame++;
+
+        // Slow the scanner down for a heavier feel
+        scanY += scanDir * 0.003;
+        if (scanY > 1.2) scanDir = -1;
+        if (scanY < -0.2) scanDir = 1;
+
+        const actualScanY = scanY * wgCanvas.height;
+
+        // Grid background
+        wCtx.strokeStyle = "rgba(255,255,255,0.03)";
+        wCtx.lineWidth = 1;
+        wCtx.beginPath();
+        for (let i = 0; i < wgCanvas.width; i += 40) {
+          wCtx.moveTo(i, 0);
+          wCtx.lineTo(i, wgCanvas.height);
+        }
+        for (let i = 0; i < wgCanvas.height; i += 40) {
+          wCtx.moveTo(0, i);
+          wCtx.lineTo(wgCanvas.width, i);
+        }
+        wCtx.stroke();
+
+        // Render targets
+        wgNodes.forEach((n) => {
+          // Appearance animation
+          if (wgFrame > n.delay && n.opacity < 1) {
+            n.opacity += 0.02;
+          }
+
+          if (n.opacity > 0) {
+            const nx = n.x * wgCanvas.width;
+            const ny = n.y * wgCanvas.height;
+            const distToScan = Math.abs(ny - actualScanY);
+
+            // Scanner reaction zone
+            if (distToScan < 40) {
+              n.pulse = Math.min(1, n.pulse + 0.1);
+            } else {
+              n.pulse = Math.max(0, n.pulse - 0.03);
+            }
+
+            // 1) Outer ring (stroke)
+            wCtx.beginPath();
+            wCtx.arc(nx, ny, 6 + n.pulse * 3, 0, Math.PI * 2);
+            wCtx.strokeStyle =
+              n.isTarget && n.pulse > 0
+                ? `rgba(255, 0, 51, ${n.opacity * (0.4 + n.pulse)})`
+                : `rgba(255, 255, 255, ${n.opacity * 0.15})`;
+            wCtx.lineWidth = 1;
+            wCtx.stroke();
+
+            // 2) Inner dot (fill)
+            wCtx.beginPath();
+            wCtx.arc(nx, ny, 1.5 + n.pulse, 0, Math.PI * 2);
+            wCtx.fillStyle = n.isTarget
+              ? `rgba(255, 0, 51, ${n.opacity})`
+              : `rgba(204, 255, 0, ${n.opacity * 0.5})`;
+
+            if (n.pulse > 0 && n.isTarget) {
+              wCtx.shadowBlur = 15;
+              wCtx.shadowColor = "#FF0033";
+            } else if (n.pulse > 0) {
+              wCtx.shadowBlur = 10;
+              wCtx.shadowColor = "#CCFF00";
+            }
+            wCtx.fill();
+            wCtx.shadowBlur = 0; // reset
+          }
+        });
+
+        // Laser scanner line
+        if (actualScanY > 0 && actualScanY < wgCanvas.height) {
+          wCtx.beginPath();
+          wCtx.moveTo(0, actualScanY);
+          wCtx.lineTo(wgCanvas.width, actualScanY);
+          wCtx.strokeStyle = "rgba(204, 255, 0, 0.6)";
+          wCtx.lineWidth = 2;
+          wCtx.shadowBlur = 15;
+          wCtx.shadowColor = "#CCFF00";
+          wCtx.stroke();
+          wCtx.shadowBlur = 0;
+
+          // Scanner trail gradient
+          let grad = wCtx.createLinearGradient(
+            0,
+            actualScanY,
+            0,
+            actualScanY - scanDir * 60
+          );
+          grad.addColorStop(0, "rgba(204, 255, 0, 0.15)");
+          grad.addColorStop(1, "rgba(204, 255, 0, 0)");
+          wCtx.fillStyle = grad;
+          wCtx.fillRect(
+            0,
+            scanDir > 0 ? actualScanY - 60 : actualScanY,
+            wgCanvas.width,
+            60
+          );
+        }
+
+        requestAnimationFrame(drawWargame);
+      }
+      drawWargame();
+
+      // ============================================================================
+      // 4. Team Member Data Injection & Intersection Observer
+      // ============================================================================
+      const escapeHtml = (value) =>
+        String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+
+      const formatProfileText = (value) =>
+        value
+          .replace(/\*\*/g, "")
+          .replace(/\\_/g, "_")
+          .replace(/\s+/g, " ")
+          .trim();
+
+      const resolveProfileRole = (nickname) => {
+        const normalizedNickname = nickname.toLowerCase();
+        if (normalizedNickname === "0xp1ain") return "Captain";
+        if (normalizedNickname === "0xalessandro") return "Co-Captain";
+        return "Researcher";
+      };
+
+      const resolveProfileImage = (profileImage) =>
+        /^https?:\/\//i.test(profileImage)
+          ? profileImage
+          : `img/${profileImage}`;
+
+      const teamData = [
+        {
+          nickname: "0xp1ain",
+          profileImage: "p1ain.png",
+          description: "NEVER EVER GIVE UP",
+          tags: [
+            "Team Leader",
+            "Web Security",
+            "CTF Player",
+            "Penetration Test",
+          ],
+        },
+        {
+          nickname: "0xAlessandro",
+          profileImage: "https://avatars.githubusercontent.com/u/80576390?v=4",
+          description: "__proto__",
+          tags: ["Web Security", "CTF"],
+        },
+        {
+          nickname: "IcesFont",
+          profileImage: "icesfont.png",
+          description: "lol",
+          tags: ["Web Security", "CTF Player"],
+        },
+        {
+          nickname: "One",
+          profileImage: "one.png",
+          description: "I am newbie Forever",
+          tags: ["Web Security", "Penetration Tester", "CTF Player"],
+        },
+        {
+          nickname: "siunam",
+          profileImage: "https://avatars.githubusercontent.com/u/104430134?v=4",
+          description: "<img/src/onerror=location=window.name>",
+          tags: ["Web Security", "Researcher", "CTF"],
+        },
+        {
+          nickname: "Dat2Phit",
+          profileImage: "dat2phit.png",
+          description: "El Psy Kongroo",
+          tags: [
+            "Web Security",
+            "CTF Player",
+            "Penetration Test",
+            "Researcher",
+          ],
+        },
+        {
+          nickname: "Masamune",
+          profileImage: "https://avatars.githubusercontent.com/u/125840508?v=4",
+          description: "Try Harder",
+          tags: ["Web Security", "CTF Player", "Penetration Test"],
+        },
+        {
+          nickname: "ElleuchX1",
+          profileImage:
+            "https://pbs.twimg.com/profile_images/1939625960329924608/aQ_SG4qu_400x400.jpg",
+          description: "Caffeine abuser, sometimes finding bugs",
+          tags: ["Web Security", "Research", "Penetration Test", "CTF"],
+        },
+        {
+          nickname: "SharpEdged",
+          profileImage:
+            "https://avatars.githubusercontent.com/u/48861530?s=96&v=4",
+          description: "その目、だれの目？",
+          tags: ["Web Security", "Crypto", "CTF"],
+        },
+        {
+          nickname: "22sh",
+          profileImage:
+            "https://i.pinimg.com/736x/48/8b/52/488b52b3672d8bf1d20edf003cfa9bde.jpg",
+          description: "lazy man with a busy life",
+          tags: ["Web Security", "Penetration test", "web3"],
+        },
+        {
+          nickname: "downgrade",
+          profileImage: "https://avatars.githubusercontent.com/u/50407210?v=4",
+          description: "idk, web enjoyer",
+          tags: ["Web Security", "CTF"],
+        },
+        {
+          nickname: "irogir",
+          profileImage:
+            "https://avatars.githubusercontent.com/u/103448522?s=40&v=4",
+          description: "occasional ctf player",
+          tags: ["Web Security", "LLM Security", "CTF"],
+        },
+        {
+          nickname: "abdoghazy",
+          profileImage: "https://avatars.githubusercontent.com/u/64314534?v=4",
+          description: "yet another web security artist",
+          tags: ["Web Security", "Researcher", "CTF"],
+        },
+        {
+          nickname: "Z4ki",
+          profileImage: "https://avatars.githubusercontent.com/u/68925917?v=4",
+          description: "this user is doing the best he can",
+          tags: [
+            "Web Security",
+            "CTF",
+            "Active Directory",
+            "Android",
+            "Networks",
+          ],
+        },
+        {
+          nickname: "Predic",
+          profileImage: "https://avatars.githubusercontent.com/u/55022230?v=4",
+          description: "Kawaii Shiro",
+          tags: ["Web Security", "Security Researcher", "CTF Player"],
+        },
+        {
+          nickname: "m411k",
+          profileImage: "https://avatars.githubusercontent.com/u/73129654?v=4",
+          description: "I profit from people's mistakes...",
+          tags: ["Web Security", "Browser Exploitation", "CTF"],
+        },
+        {
+          nickname: "filime",
+          profileImage: "https://avatars.githubusercontent.com/u/36452369?v=4",
+          description: "I hate chromium",
+          tags: ["Web Security", "CTF", "Pentesting"],
+        },
+        {
+          nickname: "TCP/IP",
+          profileImage:
+            "https://tistory1.daumcdn.net/tistory/6784335/attach/4387a073689d4abeb1e8ffe848296151",
+          description: "hi",
+          tags: ["Web Security", "CTF Player"],
+        },
+        {
+          nickname: "aestera",
+          profileImage: "https://avatars.githubusercontent.com/u/117811685?v=4",
+          description: "Trying to do better",
+          tags: ["Web Security", "Penetration Test"],
+        },
+        {
+          nickname: "goldleo1",
+          profileImage: "goldleo1.png",
+          description: "NaN",
+          tags: ["Web Security", "Researcher", "CTF Player"],
+        },
+        {
+          nickname: "secu23",
+          profileImage: "secu23.png",
+          description: "NaN",
+          tags: ["Web Security", "CTF Player"],
+        },
+      ].map((member) => ({
+        name: `@${member.nickname}`,
+        role: resolveProfileRole(member.nickname),
+        quote: formatProfileText(member.description),
+        tags: member.tags,
+        img: resolveProfileImage(member.profileImage),
+      }));
+
+      const teamContainer = document.getElementById("team-container");
+      teamData.forEach((member, i) => {
+        const tagsHtml = member.tags
+          .map((tag) => `<span class="t-tag">${escapeHtml(tag)}</span>`)
+          .join("");
+        const delay = (i % 3) * 0.1;
+
+        const cardHtml = `
+                <div class="team-member reveal" style="transition-delay: ${delay}s;">
+                    <div class="t-profile">
+                        <img src="${escapeHtml(member.img)}" alt="${escapeHtml(
+          member.name
+        )}">
+                    </div>
+                    <div class="t-info">
+                        <div class="t-role">// ${escapeHtml(member.role)}</div>
+                        <div class="t-name">${escapeHtml(member.name)}</div>
+                        <div class="t-quote">"${escapeHtml(member.quote)}"</div>
+                        <div class="t-tags">${tagsHtml}</div>
+                    </div>
+                </div>
+            `;
+        teamContainer.insertAdjacentHTML("beforeend", cardHtml);
+      });
+
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px",
+      };
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("active");
+            observer.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll(".reveal").forEach((el) => {
+        observer.observe(el);
+      });
+    </script>
+  </body>
+</html>
