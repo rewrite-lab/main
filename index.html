@@ -4,6 +4,57 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rewrite Lab | Elite Web Security Research</title>
+    <link rel="icon" type="image/png" href="img/favicon.png" />
+    <meta
+      name="description"
+      content="Rewrite Lab is a pure web security research team sharing deep analysis, practical knowledge, and public platforms for the global hacking community."
+    />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+    <meta name="theme-color" content="#030303" />
+    <link rel="canonical" href="https://rewritelab.org/" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Rewrite Lab" />
+    <meta
+      property="og:title"
+      content="Rewrite Lab | Elite Web Security Research"
+    />
+    <meta
+      property="og:description"
+      content="Rewrite Lab is a pure web security research team sharing deep analysis, practical knowledge, and public platforms for the global hacking community."
+    />
+    <meta property="og:url" content="https://rewritelab.org/" />
+    <meta
+      property="og:image"
+      content="https://rewritelab.org/img/rewrite.png"
+    />
+    <meta property="og:image:alt" content="Rewrite Lab logo" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Rewrite Lab | Elite Web Security Research"
+    />
+    <meta
+      name="twitter:description"
+      content="Rewrite Lab is a pure web security research team sharing deep analysis, practical knowledge, and public platforms for the global hacking community."
+    />
+    <meta
+      name="twitter:image"
+      content="https://rewritelab.org/img/rewrite.png"
+    />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Rewrite Lab",
+        "url": "https://rewritelab.org/",
+        "logo": "https://rewritelab.org/img/rewrite.png",
+        "description": "Rewrite Lab is a pure web security research team sharing deep analysis, practical knowledge, and public platforms for the global hacking community."
+      }
+    </script>
     <!-- High-end display font (Clash Display) and body font (Pretendard) -->
     <link
       href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap"
@@ -75,13 +126,15 @@
       }
 
       .logo {
-        font-family: var(--font-display);
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--text-primary);
+        display: inline-flex;
+        align-items: center;
         text-decoration: none;
-        letter-spacing: 1px;
-        text-transform: uppercase;
+      }
+      .logo img {
+        display: block;
+        width: auto;
+        height: clamp(48px, 4.4vw, 64px);
+        object-fit: contain;
       }
 
       .nav-links {
@@ -533,6 +586,9 @@
       }
 
       @media (max-width: 640px) {
+        .logo img {
+          height: 42px;
+        }
         .team-grid {
           grid-template-columns: 1fr;
           gap: 1.25rem;
@@ -555,7 +611,9 @@
   </head>
   <body>
     <nav>
-      <a href="#" class="logo">REWRITE LAB</a>
+      <a href="#" class="logo" aria-label="Rewrite Lab home">
+        <img src="img/rewrite.png" alt="Rewrite Lab" />
+      </a>
       <div class="nav-links">
         <a href="#about">About</a>
         <a href="#platforms">Platforms</a>
@@ -1306,6 +1364,12 @@
           profileImage: "secu23.png",
           description: "NaN",
           tags: ["Web Security", "CTF Player"],
+        },
+        {
+          nickname: "Waivey",
+          profileImage: "https://avatars.githubusercontent.com/u/90015315?v=4",
+          description: "**Amatda**",
+          tags: ["Web Security", "Development", "Server", "Automation"],
         },
       ].map((member) => ({
         name: `@${member.nickname}`,
