@@ -900,7 +900,7 @@
           x: Math.cos(theta) * Math.sin(phi),
           y: Math.sin(theta) * Math.sin(phi),
           z: Math.cos(phi),
-          delay: Math.random() * 280, // Spread timing out for a slower reveal
+          delay: Math.random() * 300, // Spread timing out for a slower reveal
           scale: 0,
           opacity: 0,
         });
@@ -1027,88 +1027,120 @@
 
       let rTime = 0;
       let orbitRot = 0;
-      const resTrail = [];
-      const maxResTrail = 35;
+
+      function traceSmoothPath(ctx, points) {
+        if (points.length < 2) return;
+
+        ctx.moveTo(points[0].x, points[0].y);
+        for (let i = 1; i < points.length - 1; i++) {
+          const midX = (points[i].x + points[i + 1].x) / 2;
+          const midY = (points[i].y + points[i + 1].y) / 2;
+          ctx.quadraticCurveTo(points[i].x, points[i].y, midX, midY);
+        }
+        ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
+      }
 
       function drawResearch() {
-        // Trail effect
-        rCtx.fillStyle = "rgba(10, 10, 10, 0.08)";
-        rCtx.fillRect(0, 0, resCanvas.width, resCanvas.height);
+        rCtx.clearRect(0, 0, resCanvas.width, resCanvas.height);
 
         const cx = resCanvas.width / 2;
         const cy = resCanvas.height / 2;
-        const r = Math.min(cx, cy) * 0.7;
+        const r = Math.min(cx, cy) * 0.68;
 
         rTime += 0.012; // Laser movement speed, kept intentionally slow
         orbitRot += 0.003; // Overall 3D orbit rotation speed, kept intentionally slow
 
-        // Infinity / figure-eight curve (Lissajous)
-        const lx = Math.sin(rTime) * r;
-        const ly = Math.sin(rTime) * Math.cos(rTime) * r; // Creates the crossover
-        const lz = Math.cos(rTime) * (r * 0.4); // Depth for the 3D feel
-
         const cosO = Math.cos(orbitRot);
         const sinO = Math.sin(orbitRot);
+        const projectOrbitPoint = (t) => {
+          // Infinity / figure-eight curve (Lissajous)
+          const px = Math.sin(t) * r;
+          const py = Math.sin(t) * Math.cos(t) * r;
+          const pz = Math.cos(t) * (r * 0.4);
 
-        // Rotate on the Y axis
-        let fx = lx * cosO - lz * sinO;
-        let fz = lz * cosO + lx * sinO;
+          // Rotate on the Y axis
+          const rx = px * cosO - pz * sinO;
+          const rz = pz * cosO + px * sinO;
 
-        // Add a slight tilt on the X axis
-        const tilt = 0.6;
-        let fy = ly * Math.cos(tilt) - fz * Math.sin(tilt);
-        let finalZ = fz * Math.cos(tilt) + ly * Math.sin(tilt);
+          // Add a slight tilt on the X axis
+          const tilt = 0.6;
+          const ry = py * Math.cos(tilt) - rz * Math.sin(tilt);
+          const finalZ = rz * Math.cos(tilt) + py * Math.sin(tilt);
+          const pointScale = 300 / (300 + finalZ);
 
-        let scale = 300 / (300 + finalZ);
-        const pointerX = cx + fx * scale;
-        const pointerY = cy + fy * scale;
+          return {
+            x: cx + rx * pointScale,
+            y: cy + ry * pointScale,
+            z: finalZ,
+            scale: pointScale,
+          };
+        };
 
-        resTrail.push({ x: pointerX, y: pointerY, scale });
-        if (resTrail.length > maxResTrail) {
-          resTrail.shift();
+        const orbitPoints = [];
+        for (let i = 0; i <= Math.PI * 2; i += 0.025) {
+          const point = projectOrbitPoint(i);
+          orbitPoints.push(point);
         }
 
-        for (let i = 1; i < resTrail.length; i++) {
-          const prev = resTrail[i - 1];
-          const curr = resTrail[i];
-          const progress = i / (resTrail.length - 1);
-
-          rCtx.beginPath();
-          rCtx.moveTo(prev.x, prev.y);
-          rCtx.lineTo(curr.x, curr.y);
-          rCtx.strokeStyle = `rgba(204, 255, 0, ${0.04 + progress * 0.28})`;
-          rCtx.lineWidth = 1 + progress * 2.6;
-          rCtx.stroke();
+        const beamPoints = [];
+        const beamSamples = 28;
+        const beamStep = 0.024;
+        for (let i = beamSamples; i >= 0; i--) {
+          beamPoints.push(projectOrbitPoint(rTime - i * beamStep));
         }
+        const laserPoint = projectOrbitPoint(rTime);
+        const scale = laserPoint.scale;
+        const pointerX = laserPoint.x;
+        const pointerY = laserPoint.y;
 
-        // Laser beam dot
+        rCtx.lineCap = "round";
+        rCtx.lineJoin = "round";
+
         rCtx.beginPath();
-        rCtx.arc(pointerX, pointerY, 5 * scale, 0, Math.PI * 2);
-        rCtx.fillStyle = "#CCFF00";
-        rCtx.shadowBlur = 20;
+        traceSmoothPath(rCtx, orbitPoints);
+        rCtx.strokeStyle = "rgba(176, 176, 176, 0.42)";
+        rCtx.lineWidth = 3.6;
+        rCtx.stroke();
+
+        rCtx.beginPath();
+        traceSmoothPath(rCtx, orbitPoints);
+        rCtx.strokeStyle = "rgba(255, 255, 255, 0.26)";
+        rCtx.lineWidth = 1.45;
+        rCtx.stroke();
+
+        const beamGradient = rCtx.createLinearGradient(
+          beamPoints[0].x,
+          beamPoints[0].y,
+          pointerX,
+          pointerY
+        );
+        beamGradient.addColorStop(0, "rgba(204, 255, 0, 0)");
+        beamGradient.addColorStop(0.5, "rgba(210, 255, 20, 0.22)");
+        beamGradient.addColorStop(1, "rgba(248, 255, 128, 0.95)");
+
+        rCtx.beginPath();
+        traceSmoothPath(rCtx, beamPoints);
+        rCtx.strokeStyle = beamGradient;
+        rCtx.lineWidth = 3.2 + scale * 3.8;
+        rCtx.shadowBlur = 22;
+        rCtx.shadowColor = "#CCFF00";
+        rCtx.stroke();
+
+        rCtx.beginPath();
+        traceSmoothPath(rCtx, beamPoints);
+        rCtx.strokeStyle = "rgba(244, 255, 164, 0.82)";
+        rCtx.lineWidth = 1.2 + scale * 1.8;
+        rCtx.shadowBlur = 0;
+        rCtx.stroke();
+
+        // Laser beam head
+        rCtx.beginPath();
+        rCtx.arc(pointerX, pointerY, 4.4 * scale, 0, Math.PI * 2);
+        rCtx.fillStyle = "#F3FF93";
+        rCtx.shadowBlur = 24;
         rCtx.shadowColor = "#CCFF00";
         rCtx.fill();
         rCtx.shadowBlur = 0;
-
-        // Faint background infinity orbit
-        rCtx.beginPath();
-        for (let i = 0; i < Math.PI * 2; i += 0.1) {
-          let px = Math.sin(i) * r;
-          let py = Math.sin(i) * Math.cos(i) * r;
-          let pz = Math.cos(i) * (r * 0.4);
-
-          let rx = px * cosO - pz * sinO;
-          let rz = pz * cosO + px * sinO;
-          let ry = py * Math.cos(tilt) - rz * Math.sin(tilt);
-          let rfz = rz * Math.cos(tilt) + py * Math.sin(tilt);
-          let ps = 300 / (300 + rfz);
-
-          if (i === 0) rCtx.moveTo(cx + rx * ps, cy + ry * ps);
-          else rCtx.lineTo(cx + rx * ps, cy + ry * ps);
-        }
-        rCtx.strokeStyle = "rgba(255, 255, 255, 0.04)";
-        rCtx.lineWidth = 1;
-        rCtx.stroke();
 
         requestAnimationFrame(drawResearch);
       }
