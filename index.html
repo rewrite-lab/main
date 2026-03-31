@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -354,7 +354,9 @@
           calc(100% - 15px) 100%,
           0 100%
         );
-        transition: background 0.3s, color 0.3s;
+        transition:
+          background 0.3s,
+          color 0.3s;
       }
       .btn:hover {
         background: var(--accent);
@@ -886,7 +888,7 @@
 
       const lightDir = { x: -1, y: -1, z: 1 };
       const lightLen = Math.sqrt(
-        lightDir.x ** 2 + lightDir.y ** 2 + lightDir.z ** 2
+        lightDir.x ** 2 + lightDir.y ** 2 + lightDir.z ** 2,
       );
       lightDir.x /= lightLen;
       lightDir.y /= lightLen;
@@ -1112,7 +1114,7 @@
           beamPoints[0].x,
           beamPoints[0].y,
           pointerX,
-          pointerY
+          pointerY,
         );
         beamGradient.addColorStop(0, "rgba(204, 255, 0, 0)");
         beamGradient.addColorStop(0.5, "rgba(210, 255, 20, 0.22)");
@@ -1266,7 +1268,7 @@
             0,
             actualScanY,
             0,
-            actualScanY - scanDir * 60
+            actualScanY - scanDir * 60,
           );
           grad.addColorStop(0, "rgba(204, 255, 0, 0.15)");
           grad.addColorStop(1, "rgba(204, 255, 0, 0)");
@@ -1275,7 +1277,7 @@
             0,
             scanDir > 0 ? actualScanY - 60 : actualScanY,
             wgCanvas.width,
-            60
+            60,
           );
         }
 
@@ -1365,6 +1367,13 @@
             "Penetration Test",
             "Researcher",
           ],
+        },
+        {
+          nickname: "frevadiscor",
+          profileImage:
+            "https://uploads-public.hackmd.io/upload_66f74a5fb7f3afd50d05040c622bc517.png",
+          description: "**Pharmacist by profession, web breaker by passion**",
+          tags: ["Web Security", "CTF Player"],
         },
         {
           nickname: "Masamune",
@@ -1492,8 +1501,8 @@
                 <div class="team-member reveal" style="transition-delay: ${delay}s;">
                     <div class="t-profile">
                         <img src="${escapeHtml(member.img)}" alt="${escapeHtml(
-          member.name
-        )}">
+                          member.name,
+                        )}">
                     </div>
                     <div class="t-info">
                         <div class="t-role">// ${escapeHtml(member.role)}</div>
