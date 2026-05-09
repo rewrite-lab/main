@@ -428,6 +428,39 @@
         object-fit: cover;
         transition: transform 0.4s ease;
       }
+      .t-profile.is-empty {
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent 58%),
+          linear-gradient(180deg, #171717, #101010);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .t-profile.is-empty::before {
+        content: "";
+        position: absolute;
+        inset: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        clip-path: polygon(
+          8px 0,
+          100% 0,
+          100% calc(100% - 8px),
+          calc(100% - 8px) 100%,
+          0 100%,
+          0 8px
+        );
+      }
+      .t-profile.is-empty::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(
+            135deg,
+            transparent 46%,
+            rgba(204, 255, 0, 0.12) 50%,
+            transparent 54%
+          );
+        opacity: 0.5;
+      }
       .team-member:hover .t-profile img {
         transform: scale(1.04);
       }
@@ -1310,10 +1343,13 @@
         return "Researcher";
       };
 
-      const resolveProfileImage = (profileImage) =>
-        /^https?:\/\//i.test(profileImage)
-          ? profileImage
-          : `img/${profileImage}`;
+      const resolveProfileImage = (profileImage) => {
+        const normalizedImage = profileImage?.trim();
+        if (!normalizedImage) return "";
+        return /^https?:\/\//i.test(normalizedImage)
+          ? normalizedImage
+          : `img/${normalizedImage}`;
+      };
 
       const teamData = [
         {
@@ -1483,6 +1519,12 @@
           tags: ["Web Security", "Browser Security", "V8 Research"],
         },
         {
+          nickname: "sink",
+          profileImage: "",
+          description: "Tracing bugs back to their origin.",
+          tags: ["Web Security", "CTF Player"],
+        },
+        {
           nickname: "Waivey",
           profileImage: "https://avatars.githubusercontent.com/u/90015315?v=4",
           description: "**Amatda**",
@@ -1502,14 +1544,17 @@
           .map((tag) => `<span class="t-tag">${escapeHtml(tag)}</span>`)
           .join("");
         const delay = (i % 3) * 0.1;
-
-        const cardHtml = `
-                <div class="team-member reveal" style="transition-delay: ${delay}s;">
-                    <div class="t-profile">
+        const profileHtml = member.img
+          ? `<div class="t-profile">
                         <img src="${escapeHtml(member.img)}" alt="${escapeHtml(
                           member.name,
                         )}">
-                    </div>
+                    </div>`
+          : `<div class="t-profile is-empty" aria-hidden="true"></div>`;
+
+        const cardHtml = `
+                <div class="team-member reveal" style="transition-delay: ${delay}s;">
+                    ${profileHtml}
                     <div class="t-info">
                         <div class="t-role">// ${escapeHtml(member.role)}</div>
                         <div class="t-name">${escapeHtml(member.name)}</div>
