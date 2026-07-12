@@ -1250,7 +1250,7 @@ function HomePage({ pauseMini = false }) {
         <div className="platform-cards">
           <PlatformCard
             title="RESEARCH"
-            href="https://research.rewritelab.org"
+            href="https://rewritelab.org/research"
             button="Explore Research"
             pauseMini={pauseMini}
           >
