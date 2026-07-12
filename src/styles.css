@@ -1379,21 +1379,6 @@ footer {
   animation-delay: 0.42s;
 }
 
-.research-hero-meta {
-  display: inline-flex;
-  flex-wrap: wrap;
-  margin-top: 38px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  color: #7c7c7c;
-  font-family: "Martian Mono", monospace;
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  animation: research-fade-up 1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  animation-delay: 0.54s;
-}
-
 .research-original-archive {
   position: relative;
   z-index: 6;

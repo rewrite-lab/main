@@ -1,4 +1,11 @@
-import React, { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { createRoot } from "react-dom/client";
 import {
   getResearchDocument,
@@ -21,43 +28,177 @@ const GLOBE_NODE_COUNT = 350;
 const STAR_COUNT = 620;
 
 const teamMembers = [
-  ["0xp1ain", "p1ain.png", "NEVER EVER GIVE UP", ["Team Leader", "Web Security", "CTF Player", "Penetration Test"]],
-  ["0xAlessandro", "https://avatars.githubusercontent.com/u/80576390?v=4", "__proto__", ["Web Security", "CTF"]],
+  [
+    "0xp1ain",
+    "p1ain.png",
+    "NEVER EVER GIVE UP",
+    ["Team Leader", "Web Security", "CTF Player", "Penetration Test"],
+  ],
+  [
+    "0xAlessandro",
+    "https://avatars.githubusercontent.com/u/80576390?v=4",
+    "__proto__",
+    ["Web Security", "CTF"],
+  ],
   ["IcesFont", "icesfont.png", "lol", ["Web Security", "CTF Player"]],
-  ["One", "one.png", "I am newbie Forever", ["Web Security", "Penetration Tester", "CTF Player"]],
-  ["siunam", "https://avatars.githubusercontent.com/u/104430134?v=4", "<img/src/onerror=location=window.name>", ["Web Security", "Researcher", "CTF"]],
-  ["sebsrt", "https://avatars.githubusercontent.com/u/58812164", "I like to break stuff", ["Web Security", "Researcher", "CTF"]],
-  ["Dat2Phit", "dat2phit.png", "El Psy Kongroo", ["Web Security", "CTF Player", "Penetration Test", "Researcher"]],
-  ["frevadiscor", "https://uploads-public.hackmd.io/upload_66f74a5fb7f3afd50d05040c622bc517.png", "Pharmacist by profession, web breaker by passion", ["Web Security", "CTF Player"]],
-  ["Masamune", "https://avatars.githubusercontent.com/u/125840508?v=4", "Try Harder", ["Web Security", "CTF Player", "Penetration Test"]],
-  ["ctfguy", "https://avatars.githubusercontent.com/u/138273779?v=4", "I am just a CTF player", ["Researcher", "CTF Player"]],
-  ["ElleuchX1", "https://pbs.twimg.com/profile_images/1939625960329924608/aQ_SG4qu_400x400.jpg", "Caffeine abuser, sometimes finding bugs", ["Web Security", "Research", "Penetration Test", "CTF"]],
-  ["SharpEdged", "https://avatars.githubusercontent.com/u/48861530?s=96&v=4", "sonome darenome?", ["Web Security", "Crypto", "CTF"]],
-  ["22sh", "https://i.pinimg.com/736x/48/8b/52/488b52b3672d8bf1d20edf003cfa9bde.jpg", "lazy man with a busy life", ["Web Security", "Penetration test", "web3"]],
-  ["downgrade", "https://avatars.githubusercontent.com/u/50407210?v=4", "idk, web enjoyer", ["Web Security", "CTF"]],
-  ["irogir", "https://avatars.githubusercontent.com/u/103448522?s=40&v=4", "occasional ctf player", ["Web Security", "LLM Security", "CTF"]],
-  ["abdoghazy", "https://avatars.githubusercontent.com/u/64314534?v=4", "yet another web security artist", ["Web Security", "Researcher", "CTF"]],
-  ["Z4ki", "https://avatars.githubusercontent.com/u/68925917?v=4", "this user is doing the best he can", ["Web Security", "CTF", "Active Directory", "Android", "Networks"]],
-  ["Predic", "https://avatars.githubusercontent.com/u/55022230?v=4", "Kawaii Shiro", ["Web Security", "Security Researcher", "CTF Player"]],
-  ["m411k", "https://avatars.githubusercontent.com/u/73129654?v=4", "I profit from people's mistakes...", ["Web Security", "Browser Exploitation", "CTF"]],
-  ["filime", "https://avatars.githubusercontent.com/u/36452369?v=4", "I hate chromium", ["Web Security", "CTF", "Pentesting"]],
-  ["TCP/IP", "https://tistory1.daumcdn.net/tistory/6784335/attach/4387a073689d4abeb1e8ffe848296151", "hi", ["Web Security", "CTF Player"]],
-  ["aestera", "https://avatars.githubusercontent.com/u/117811685?v=4", "Trying to do better", ["Web Security", "Penetration Test"]],
-  ["goldleo1", "goldleo1.png", "NaN", ["Web Security", "Researcher", "CTF Player"]],
+  [
+    "One",
+    "one.png",
+    "I am newbie Forever",
+    ["Web Security", "Penetration Tester", "CTF Player"],
+  ],
+  [
+    "siunam",
+    "https://avatars.githubusercontent.com/u/104430134?v=4",
+    "<img/src/onerror=location=window.name>",
+    ["Web Security", "Researcher", "CTF"],
+  ],
+  [
+    "sebsrt",
+    "https://avatars.githubusercontent.com/u/58812164",
+    "I like to break stuff",
+    ["Web Security", "Researcher", "CTF"],
+  ],
+  [
+    "Dat2Phit",
+    "dat2phit.png",
+    "El Psy Kongroo",
+    ["Web Security", "CTF Player", "Penetration Test", "Researcher"],
+  ],
+  [
+    "frevadiscor",
+    "https://uploads-public.hackmd.io/upload_66f74a5fb7f3afd50d05040c622bc517.png",
+    "Pharmacist by profession, web breaker by passion",
+    ["Web Security", "CTF Player"],
+  ],
+  [
+    "Masamune",
+    "https://avatars.githubusercontent.com/u/125840508?v=4",
+    "Try Harder",
+    ["Web Security", "CTF Player", "Penetration Test"],
+  ],
+  [
+    "ctfguy",
+    "https://avatars.githubusercontent.com/u/138273779?v=4",
+    "I am just a CTF player",
+    ["Researcher", "CTF Player"],
+  ],
+  [
+    "ElleuchX1",
+    "https://pbs.twimg.com/profile_images/1939625960329924608/aQ_SG4qu_400x400.jpg",
+    "Caffeine abuser, sometimes finding bugs",
+    ["Web Security", "Research", "Penetration Test", "CTF"],
+  ],
+  [
+    "SharpEdged",
+    "https://avatars.githubusercontent.com/u/48861530?s=96&v=4",
+    "sonome darenome?",
+    ["Web Security", "Crypto", "CTF"],
+  ],
+  [
+    "22sh",
+    "https://i.pinimg.com/736x/48/8b/52/488b52b3672d8bf1d20edf003cfa9bde.jpg",
+    "lazy man with a busy life",
+    ["Web Security", "Penetration test", "web3"],
+  ],
+  [
+    "downgrade",
+    "https://avatars.githubusercontent.com/u/50407210?v=4",
+    "idk, web enjoyer",
+    ["Web Security", "CTF"],
+  ],
+  [
+    "irogir",
+    "https://avatars.githubusercontent.com/u/103448522?s=40&v=4",
+    "occasional ctf player",
+    ["Web Security", "LLM Security", "CTF"],
+  ],
+  [
+    "abdoghazy",
+    "https://avatars.githubusercontent.com/u/64314534?v=4",
+    "yet another web security artist",
+    ["Web Security", "Researcher", "CTF"],
+  ],
+  [
+    "Z4ki",
+    "https://avatars.githubusercontent.com/u/68925917?v=4",
+    "this user is doing the best he can",
+    ["Web Security", "CTF", "Active Directory", "Android", "Networks"],
+  ],
+  [
+    "Predic",
+    "https://avatars.githubusercontent.com/u/55022230?v=4",
+    "Kawaii Shiro",
+    ["Web Security", "Security Researcher", "CTF Player"],
+  ],
+  [
+    "m411k",
+    "https://avatars.githubusercontent.com/u/73129654?v=4",
+    "I profit from people's mistakes...",
+    ["Web Security", "Browser Exploitation", "CTF"],
+  ],
+  [
+    "filime",
+    "https://avatars.githubusercontent.com/u/36452369?v=4",
+    "I hate chromium",
+    ["Web Security", "CTF", "Pentesting"],
+  ],
+  [
+    "TCP/IP",
+    "https://tistory1.daumcdn.net/tistory/6784335/attach/4387a073689d4abeb1e8ffe848296151",
+    "hi",
+    ["Web Security", "CTF Player"],
+  ],
+  [
+    "aestera",
+    "https://avatars.githubusercontent.com/u/117811685?v=4",
+    "Trying to do better",
+    ["Web Security", "Penetration Test"],
+  ],
+  [
+    "goldleo1",
+    "goldleo1.png",
+    "NaN",
+    ["Web Security", "Researcher", "CTF Player"],
+  ],
   ["secu23", "secu23.png", "NaN", ["Web Security", "CTF Player"]],
-  ["oxqnd", "https://avatars.githubusercontent.com/u/122880412?v=4", "Crash first, understand later", ["Web Security", "Browser Security", "V8 Research"]],
-  ["sink", "", "Tracing bugs back to their origin.", ["Web Security", "CTF Player"]],
-  ["Waivey", "https://avatars.githubusercontent.com/u/90015315?v=4", "Amatda", ["Web Security", "Development", "Server", "Automation"]],
+  [
+    "oxqnd",
+    "https://avatars.githubusercontent.com/u/122880412?v=4",
+    "Crash first, understand later",
+    ["Web Security", "Browser Security", "V8 Research"],
+  ],
+  [
+    "sink",
+    "",
+    "Tracing bugs back to their origin.",
+    ["Web Security", "CTF Player"],
+  ],
+  [
+    "Waivey",
+    "https://avatars.githubusercontent.com/u/90015315?v=4",
+    "Amatda",
+    ["Web Security", "Development", "Server", "Automation"],
+  ],
 ].map(([nickname, image, quote, tags]) => ({
   name: `@${nickname}`,
-  role: nickname.toLowerCase() === "0xp1ain" ? "Captain" : nickname.toLowerCase() === "0xalessandro" ? "Co-Captain" : "Researcher",
+  role:
+    nickname.toLowerCase() === "0xp1ain"
+      ? "Captain"
+      : nickname.toLowerCase() === "0xalessandro"
+        ? "Co-Captain"
+        : "Researcher",
   quote,
   tags,
-  img: image && /^https?:\/\//i.test(image) ? image : image ? `/img/${image}` : "",
+  img:
+    image && /^https?:\/\//i.test(image) ? image : image ? `/img/${image}` : "",
 }));
 
 const teamMemberById = new Map(
-  teamMembers.map((member) => [member.name.replace(/^@/, "").toLowerCase(), member]),
+  teamMembers.map((member) => [
+    member.name.replace(/^@/, "").toLowerCase(),
+    member,
+  ]),
 );
 
 const availableCatalogLanguages = ["EN", "KO"].filter((language) =>
@@ -68,27 +209,27 @@ const RESEARCH_LANG_KEY = "rw_research_lang";
 const researchStrings = {
   EN: {
     heroKicker: "Rewrite Lab \u2014 Research",
-    lead: "A global collective researching web hacking and LLM-fused security. We publish everything we learn \u2014 openly and transparently \u2014 so every researcher can begin where we left off.",
-    meta: (count) => [`${count} Publication${count === 1 ? "" : "s"}`, "Open Source", "KO \u00b7 EN", "Est. 2016"],
+    lead: "We are a global research team focused on web hacking and LLM-integrated security. Everything we research is shared openly and transparently with everyone. RewriteLab is a space where people from around the world who are interested in security come together as one. Stay tuned for the exciting research we will continue to publish.",
     archiveKicker: "Publications",
     archiveTitle: "All Research",
     entries: "Entries",
     latest: "Latest",
     read: "Read research",
-    footerTag: "Global high-tier hackers building a bidirectional growth community through deep, uncompromised web security research.",
+    footerTag:
+      "Global high-tier hackers building a bidirectional growth community through deep, uncompromised web security research.",
     home: "Home",
     researchers: (n) => `${n} researcher${n > 1 ? "s" : ""}`,
   },
   KO: {
     heroKicker: "Rewrite Lab \u2014 Research",
-    lead: "\uc6f9 \ud574\ud0b9\uacfc LLM \uc735\ud569 \ubcf4\uc548\uc744 \uc5f0\uad6c\ud558\ub294 \uae00\ub85c\ubc8c \ub9ac\uc11c\uce58 \ucf5c\ub809\ud2f0\ube0c. \uc6b0\ub9ac\uac00 \ubc30\uc6b4 \ubaa8\ub4e0 \uac83\uc744 \ud22c\uba85\ud558\uac8c \uacf5\uac1c\ud574, \ub2e4\uc74c \uc5f0\uad6c\uc790\uac00 \uc6b0\ub9ac\uac00 \uba48\ucd98 \uc9c0\uc810\uc5d0\uc11c \ub2e4\uc2dc \uc2dc\uc791\ud560 \uc218 \uc788\uac8c \ud569\ub2c8\ub2e4.",
-    meta: (count) => [`\ub9ac\uc11c\uce58 ${count}\ud3b8`, "\uc624\ud508\uc18c\uc2a4", "KO \u00b7 EN", "2016 \uc124\ub9bd"],
+    lead: "저희는 웹 해킹과 LLM 융합 보안을 연구하는 글로벌 리서치 팀입니다. 우리가 연구한 모든 것은 모두에게 투명하게 공개합니다. 보안에 관심있는 전 세계 각지에 있는 사람들이 모두 하나로 모인 공간이 RewriteLab 입니다. 우리가 앞으로 공개할 흥미로운 연구들을 꾸준히 지켜봐주세요.",
     archiveKicker: "Publications",
     archiveTitle: "\uc804\uccb4 \ub9ac\uc11c\uce58",
     entries: "\uac1c",
     latest: "Latest",
     read: "\ub9ac\uc11c\uce58 \uc77d\uae30",
-    footerTag: "\uae4a\uace0 \ud0c0\ud611 \uc5c6\ub294 \uc6f9 \ubcf4\uc548 \uc5f0\uad6c\ub85c \uc0c1\ud638 \uc131\uc7a5\ud558\ub294 \ucee4\ubba4\ub2c8\ud2f0\ub97c \ub9cc\ub4dc\ub294 \uc804 \uc138\uacc4 \ucd5c\uc0c1\uc704 \ud574\ucee4\ub4e4.",
+    footerTag:
+      "\uae4a\uace0 \ud0c0\ud611 \uc5c6\ub294 \uc6f9 \ubcf4\uc548 \uc5f0\uad6c\ub85c \uc0c1\ud638 \uc131\uc7a5\ud558\ub294 \ucee4\ubba4\ub2c8\ud2f0\ub97c \ub9cc\ub4dc\ub294 \uc804 \uc138\uacc4 \ucd5c\uc0c1\uc704 \ud574\ucee4\ub4e4.",
     home: "\ud648",
     researchers: (n) => `\ub9ac\uc11c\ucc98 ${n}\uba85`,
   },
@@ -96,7 +237,9 @@ const researchStrings = {
 
 function readStoredResearchLanguage() {
   try {
-    return normalizeResearchLanguage(localStorage.getItem(RESEARCH_LANG_KEY)) || "EN";
+    return (
+      normalizeResearchLanguage(localStorage.getItem(RESEARCH_LANG_KEY)) || "EN"
+    );
   } catch {
     return "EN";
   }
@@ -125,7 +268,9 @@ function researchArticleUrl(number, language) {
 function currentLocationState() {
   const path = window.location.pathname.replace(/\/+$/, "") || "/";
   const requestedLanguage =
-    normalizeResearchLanguage(new URLSearchParams(window.location.search).get("lang")) || "EN";
+    normalizeResearchLanguage(
+      new URLSearchParams(window.location.search).get("lang"),
+    ) || "EN";
   const articleMatch = path.match(/^\/researchs\/(\d+)$/);
   if (articleMatch) {
     const articleNumber = Number.parseInt(articleMatch[1], 10);
@@ -143,9 +288,17 @@ function currentLocationState() {
     const language = availableCatalogLanguages.includes(requestedLanguage)
       ? requestedLanguage
       : availableCatalogLanguages[0] || "EN";
-    return { route: ROUTE_RESEARCH, articleNumber: null, researchLanguage: language };
+    return {
+      route: ROUTE_RESEARCH,
+      articleNumber: null,
+      researchLanguage: language,
+    };
   }
-  return { route: ROUTE_HOME, articleNumber: null, researchLanguage: readStoredResearchLanguage() };
+  return {
+    route: ROUTE_HOME,
+    articleNumber: null,
+    researchLanguage: readStoredResearchLanguage(),
+  };
 }
 
 function smooth(x) {
@@ -154,9 +307,16 @@ function smooth(x) {
 }
 
 function initialsForResearch(name) {
-  const clean = String(name || "").replace(/^@/, "").trim();
+  const clean = String(name || "")
+    .replace(/^@/, "")
+    .trim();
   const words = clean.split(/[^\p{L}\p{N}]+/u).filter(Boolean);
-  if (words.length > 1) return words.slice(0, 2).map((word) => word[0]).join("").toUpperCase();
+  if (words.length > 1)
+    return words
+      .slice(0, 2)
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase();
   return clean.slice(0, 2).toUpperCase();
 }
 
@@ -285,31 +445,80 @@ function CosmicCanvas({ route, phase, researchStart, enteredFromHome }) {
   const frameRef = useRef(0);
   const dprRef = useRef(1);
   const nodesRef = useRef(makeSphere(GLOBE_NODE_COUNT));
-  const linkOrderRef = useRef(Int32Array.from(
-    { length: GLOBE_NODE_COUNT },
-    (_, index) => index,
-  ));
-  const linkPairsRef = useRef(new Int32Array(
-    (GLOBE_NODE_COUNT * (GLOBE_NODE_COUNT - 1)) / 2,
-  ));
-  const projectedRef = useRef(Array.from({ length: GLOBE_NODE_COUNT }, () => ({
-    sx: 0,
-    sy: 0,
-    sz: 0,
-    p: 0,
-    bright: 0,
-    opacity: 0,
-    scale: 0,
-  })));
+  const linkOrderRef = useRef(
+    Int32Array.from({ length: GLOBE_NODE_COUNT }, (_, index) => index),
+  );
+  const linkPairsRef = useRef(
+    new Int32Array((GLOBE_NODE_COUNT * (GLOBE_NODE_COUNT - 1)) / 2),
+  );
+  const projectedRef = useRef(
+    Array.from({ length: GLOBE_NODE_COUNT }, () => ({
+      sx: 0,
+      sy: 0,
+      sz: 0,
+      p: 0,
+      bright: 0,
+      opacity: 0,
+      scale: 0,
+    })),
+  );
   const starsRef = useRef([]);
   const spritesRef = useRef(null);
   const orbitsRef = useRef([
-    { wr: 1.9, bwr: 0.13, pal: 4, ring: false, moon: false, bands: false, ang: Math.random() * 6.28 },
-    { wr: 2.7, bwr: 0.2, pal: 0, ring: false, moon: true, bands: true, ang: Math.random() * 6.28 },
-    { wr: 3.6, bwr: 0.16, pal: 2, ring: false, moon: false, bands: false, ang: Math.random() * 6.28 },
-    { wr: 4.7, bwr: 0.3, pal: 1, ring: true, moon: true, bands: true, ang: Math.random() * 6.28 },
-    { wr: 5.9, bwr: 0.24, pal: 5, ring: true, moon: false, bands: true, ang: Math.random() * 6.28 },
-    { wr: 7.1, bwr: 0.15, pal: 3, ring: false, moon: true, bands: false, ang: Math.random() * 6.28 },
+    {
+      wr: 1.9,
+      bwr: 0.13,
+      pal: 4,
+      ring: false,
+      moon: false,
+      bands: false,
+      ang: Math.random() * 6.28,
+    },
+    {
+      wr: 2.7,
+      bwr: 0.2,
+      pal: 0,
+      ring: false,
+      moon: true,
+      bands: true,
+      ang: Math.random() * 6.28,
+    },
+    {
+      wr: 3.6,
+      bwr: 0.16,
+      pal: 2,
+      ring: false,
+      moon: false,
+      bands: false,
+      ang: Math.random() * 6.28,
+    },
+    {
+      wr: 4.7,
+      bwr: 0.3,
+      pal: 1,
+      ring: true,
+      moon: true,
+      bands: true,
+      ang: Math.random() * 6.28,
+    },
+    {
+      wr: 5.9,
+      bwr: 0.24,
+      pal: 5,
+      ring: true,
+      moon: false,
+      bands: true,
+      ang: Math.random() * 6.28,
+    },
+    {
+      wr: 7.1,
+      bwr: 0.15,
+      pal: 3,
+      ring: false,
+      moon: true,
+      bands: false,
+      ang: Math.random() * 6.28,
+    },
   ]);
 
   useEffect(() => {
@@ -328,12 +537,42 @@ function CosmicCanvas({ route, phase, researchStart, enteredFromHome }) {
     light.y /= lightLen;
     light.z /= lightLen;
     const palette = [
-      { lit: "rgb(214,245,150)", mid: "rgb(120,150,55)", dark: "rgb(15,25,7)", atm: "199,242,60" },
-      { lit: "rgb(182,236,216)", mid: "rgb(70,140,120)", dark: "rgb(9,28,24)", atm: "120,220,190" },
-      { lit: "rgb(240,219,155)", mid: "rgb(165,120,55)", dark: "rgb(28,20,8)", atm: "240,200,120" },
-      { lit: "rgb(224,238,232)", mid: "rgb(140,160,150)", dark: "rgb(20,28,25)", atm: "205,228,218" },
-      { lit: "rgb(192,198,120)", mid: "rgb(95,100,55)", dark: "rgb(15,17,8)", atm: "175,190,110" },
-      { lit: "rgb(198,224,245)", mid: "rgb(88,128,175)", dark: "rgb(9,19,32)", atm: "150,190,235" },
+      {
+        lit: "rgb(214,245,150)",
+        mid: "rgb(120,150,55)",
+        dark: "rgb(15,25,7)",
+        atm: "199,242,60",
+      },
+      {
+        lit: "rgb(182,236,216)",
+        mid: "rgb(70,140,120)",
+        dark: "rgb(9,28,24)",
+        atm: "120,220,190",
+      },
+      {
+        lit: "rgb(240,219,155)",
+        mid: "rgb(165,120,55)",
+        dark: "rgb(28,20,8)",
+        atm: "240,200,120",
+      },
+      {
+        lit: "rgb(224,238,232)",
+        mid: "rgb(140,160,150)",
+        dark: "rgb(20,28,25)",
+        atm: "205,228,218",
+      },
+      {
+        lit: "rgb(192,198,120)",
+        mid: "rgb(95,100,55)",
+        dark: "rgb(15,17,8)",
+        atm: "175,190,110",
+      },
+      {
+        lit: "rgb(198,224,245)",
+        mid: "rgb(88,128,175)",
+        dark: "rgb(9,19,32)",
+        atm: "150,190,235",
+      },
     ];
 
     function resize() {
@@ -380,11 +619,36 @@ function CosmicCanvas({ route, phase, researchStart, enteredFromHome }) {
     }
 
     spritesRef.current = {
-      wd: sprite("rgba(220,255,220,0.95)", "rgba(204,255,0,0.40)", "204,255,0", false),
-      ws: sprite("rgba(220,255,220,0.95)", "rgba(204,255,0,0.40)", "204,255,0", true),
-      ld: sprite("rgba(204,255,0,0.98)", "rgba(204,255,0,0.34)", "204,255,0", false),
-      ls: sprite("rgba(204,255,0,0.98)", "rgba(204,255,0,0.34)", "204,255,0", true),
-      warm: sprite("rgba(255,242,205,0.95)", "rgba(255,205,120,0.30)", "255,205,120", false),
+      wd: sprite(
+        "rgba(220,255,220,0.95)",
+        "rgba(204,255,0,0.40)",
+        "204,255,0",
+        false,
+      ),
+      ws: sprite(
+        "rgba(220,255,220,0.95)",
+        "rgba(204,255,0,0.40)",
+        "204,255,0",
+        true,
+      ),
+      ld: sprite(
+        "rgba(204,255,0,0.98)",
+        "rgba(204,255,0,0.34)",
+        "204,255,0",
+        false,
+      ),
+      ls: sprite(
+        "rgba(204,255,0,0.98)",
+        "rgba(204,255,0,0.34)",
+        "204,255,0",
+        true,
+      ),
+      warm: sprite(
+        "rgba(255,242,205,0.95)",
+        "rgba(255,205,120,0.30)",
+        "255,205,120",
+        false,
+      ),
     };
 
     starsRef.current = Array.from({ length: STAR_COUNT }, () => {
@@ -423,7 +687,8 @@ function CosmicCanvas({ route, phase, researchStart, enteredFromHome }) {
       if (mode === "reveal") advanceRevealNodes();
       for (let i = 0; i < nodes.length; i += 1) {
         const n = nodes[i];
-        const opacity = mode === "force" ? Math.max(n.opacity, 0.95) : n.opacity;
+        const opacity =
+          mode === "force" ? Math.max(n.opacity, 0.95) : n.opacity;
         const scale = mode === "force" ? Math.max(n.scale, 0.95) : n.scale;
         const x1 = n.x * cosY - n.z * sinY;
         const z1 = n.z * cosY + n.x * sinY;
@@ -530,7 +795,10 @@ function CosmicCanvas({ route, phase, researchStart, enteredFromHome }) {
         const alpha = n.opacity * n.bright * (n.sz > 0 ? 0.5 : 1);
         ctx.beginPath();
         ctx.arc(n.sx, n.sy, Math.max(0.2, n.p * 1.5 * n.scale), 0, Math.PI * 2);
-        ctx.fillStyle = n.bright > 0.8 ? `rgba(255,255,255,${alpha})` : `rgba(204,255,0,${alpha})`;
+        ctx.fillStyle =
+          n.bright > 0.8
+            ? `rgba(255,255,255,${alpha})`
+            : `rgba(204,255,0,${alpha})`;
         ctx.shadowBlur = n.bright > 0.8 ? 10 : 0;
         ctx.shadowColor = "#ccff00";
         ctx.fill();
@@ -586,7 +854,13 @@ function CosmicCanvas({ route, phase, researchStart, enteredFromHome }) {
         const mR = r * 2.1;
         ctx.fillStyle = "rgba(225,240,220,0.95)";
         ctx.beginPath();
-        ctx.arc(x + Math.cos(orbit.moonA) * mR, y + Math.sin(orbit.moonA) * mR * 0.5, Math.max(0.8, r * 0.16), 0, Math.PI * 2);
+        ctx.arc(
+          x + Math.cos(orbit.moonA) * mR,
+          y + Math.sin(orbit.moonA) * mR * 0.5,
+          Math.max(0.8, r * 0.16),
+          0,
+          Math.PI * 2,
+        );
         ctx.fill();
       }
       ctx.globalAlpha = 1;
@@ -597,8 +871,13 @@ function CosmicCanvas({ route, phase, researchStart, enteredFromHome }) {
       const localHeight = bounds ? bounds.height : window.innerHeight;
       const diag = Math.hypot(localWidth, localHeight);
       const collapseStart = 2600 + 4200 + 4600;
-      const revealProg = Math.max(0, Math.min(1, (elapsed - collapseStart) / (5000 + 3600)));
-      const pull = smooth(Math.max(0, Math.min(1, (elapsed - collapseStart) / (5000 + 6000))));
+      const revealProg = Math.max(
+        0,
+        Math.min(1, (elapsed - collapseStart) / (5000 + 3600)),
+      );
+      const pull = smooth(
+        Math.max(0, Math.min(1, (elapsed - collapseStart) / (5000 + 6000))),
+      );
       const starScale = 1.62 - 0.62 * pull;
       if (revealProg > 0.001) {
         ctx.save();
@@ -623,7 +902,13 @@ function CosmicCanvas({ route, phase, researchStart, enteredFromHome }) {
           const tw = 0.55 + 0.45 * Math.sin(now * 0.001 * s.tws + s.tw);
           ctx.globalAlpha = fin * tw * (0.45 + s.d * 0.55);
           const size = s.base * (0.5 + s.d * 0.5) * (0.8 + 0.2 * starScale);
-          ctx.drawImage(spritesRef.current[s.key], sx - size / 2, sy - size / 2, size, size);
+          ctx.drawImage(
+            spritesRef.current[s.key],
+            sx - size / 2,
+            sy - size / 2,
+            size,
+            size,
+          );
         }
         ctx.globalAlpha = 1;
         ctx.restore();
@@ -634,7 +919,10 @@ function CosmicCanvas({ route, phase, researchStart, enteredFromHome }) {
       advanceOrbits();
       for (const orbit of orbitsRef.current) {
         const r = orbit.wr * zoom;
-        const alpha = orbReveal * Math.max(0, Math.min(1, (diag * 0.62 - r) / (diag * 0.16))) * Math.max(0, Math.min(1, (r - 10) / 20));
+        const alpha =
+          orbReveal *
+          Math.max(0, Math.min(1, (diag * 0.62 - r) / (diag * 0.16))) *
+          Math.max(0, Math.min(1, (r - 10) / 20));
         if (alpha <= 0.01) continue;
         ctx.globalCompositeOperation = "lighter";
         ctx.globalAlpha = alpha * 0.8;
@@ -674,10 +962,13 @@ function CosmicCanvas({ route, phase, researchStart, enteredFromHome }) {
 
       if (current.phase === "research") {
         const canvasRect = canvas.getBoundingClientRect();
-        const canvasVisible = canvasRect.bottom > 0 && canvasRect.top < window.innerHeight;
+        const canvasVisible =
+          canvasRect.bottom > 0 && canvasRect.top < window.innerHeight;
         if (!canvasVisible) {
           const elapsed = Math.max(0, now - current.researchStart);
-          const entryProgress = current.enteredFromHome ? smooth(elapsed / RESEARCH_ENTRY_MS) : 1;
+          const entryProgress = current.enteredFromHome
+            ? smooth(elapsed / RESEARCH_ENTRY_MS)
+            : 1;
           if (current.enteredFromHome) advanceRevealNodes();
           if (entryProgress >= 1) advanceOrbits();
           raf = requestAnimationFrame(draw);
@@ -695,19 +986,20 @@ function CosmicCanvas({ route, phase, researchStart, enteredFromHome }) {
       const hero = document.querySelector("[data-hero]");
       const heroWidth = hero?.clientWidth;
       const heroHeight = hero?.clientHeight;
-      const researchCanvas = heroWidth && heroHeight
-        ? {
-          left: hero.offsetLeft + heroWidth * 0.3,
-          top: hero.offsetTop,
-          width: heroWidth * 0.7,
-          height: heroHeight,
-        }
-        : {
-          left: window.innerWidth * 0.3,
-          top: 70,
-          width: window.innerWidth * 0.7,
-          height: Math.min(window.innerHeight * 0.9, 840),
-        };
+      const researchCanvas =
+        heroWidth && heroHeight
+          ? {
+              left: hero.offsetLeft + heroWidth * 0.3,
+              top: hero.offsetTop,
+              width: heroWidth * 0.7,
+              height: heroHeight,
+            }
+          : {
+              left: window.innerWidth * 0.3,
+              top: 70,
+              width: window.innerWidth * 0.7,
+              height: Math.min(window.innerHeight * 0.9, 840),
+            };
       const research = {
         x: researchCanvas.left + researchCanvas.width * 0.71,
         y: researchCanvas.top + researchCanvas.height * 0.5,
@@ -717,13 +1009,17 @@ function CosmicCanvas({ route, phase, researchStart, enteredFromHome }) {
       if (current.phase === "home") {
         drawGlobe(home.x, home.y, home.r, rotRef.current, "reveal");
       } else {
-        const researchVisible = researchCanvas.top < window.innerHeight && researchCanvas.top + researchCanvas.height > 0;
+        const researchVisible =
+          researchCanvas.top < window.innerHeight &&
+          researchCanvas.top + researchCanvas.height > 0;
         if (!researchVisible) {
           raf = requestAnimationFrame(draw);
           return;
         }
         const elapsed = Math.max(0, now - current.researchStart);
-        const entryProgress = current.enteredFromHome ? smooth(elapsed / RESEARCH_ENTRY_MS) : 1;
+        const entryProgress = current.enteredFromHome
+          ? smooth(elapsed / RESEARCH_ENTRY_MS)
+          : 1;
         const baseX = home.x + (research.x - home.x) * entryProgress;
         const baseY = home.y + (research.y - home.y) * entryProgress;
         const baseR = home.r + (research.r - home.r) * entryProgress;
@@ -735,35 +1031,66 @@ function CosmicCanvas({ route, phase, researchStart, enteredFromHome }) {
           return;
         }
 
-        const researchElapsed = Math.max(
-          0,
-          current.enteredFromHome ? elapsed - RESEARCH_ENTRY_MS : elapsed,
-        ) * RESEARCH_TIMELINE_RATE;
+        const researchElapsed =
+          Math.max(
+            0,
+            current.enteredFromHome ? elapsed - RESEARCH_ENTRY_MS : elapsed,
+          ) * RESEARCH_TIMELINE_RATE;
         const diag = Math.hypot(researchCanvas.width, researchCanvas.height);
         const zoom0 = baseR;
         const zoomMid = diag * 0.031;
         let zoom;
         if (researchElapsed < 2600) zoom = zoom0;
-        else if (researchElapsed < 6800) zoom = zoom0 + (zoomMid - zoom0) * smooth((researchElapsed - 2600) / 4200);
+        else if (researchElapsed < 6800)
+          zoom =
+            zoom0 + (zoomMid - zoom0) * smooth((researchElapsed - 2600) / 4200);
         else if (researchElapsed < 11400) zoom = zoomMid;
-        else if (researchElapsed < 16400) zoom = zoomMid + (1.6 - zoomMid) * smooth((researchElapsed - 11400) / 5000);
+        else if (researchElapsed < 16400)
+          zoom =
+            zoomMid +
+            (1.6 - zoomMid) * smooth((researchElapsed - 11400) / 5000);
         else zoom = 1.6;
         ctx.save();
         ctx.beginPath();
-        ctx.rect(researchCanvas.left, researchCanvas.top, researchCanvas.width, researchCanvas.height);
+        ctx.rect(
+          researchCanvas.left,
+          researchCanvas.top,
+          researchCanvas.width,
+          researchCanvas.height,
+        );
         ctx.clip();
-        drawResearchSpace(now, baseX, baseY, zoom, researchElapsed, researchCanvas);
+        drawResearchSpace(
+          now,
+          baseX,
+          baseY,
+          zoom,
+          researchElapsed,
+          researchCanvas,
+        );
         ctx.globalCompositeOperation = "lighter";
         drawGlobe(baseX, baseY, zoom, rotRef.current, globeMode);
         if (zoom < 16) {
           const k = Math.max(0, Math.min(1, (16 - zoom) / 14));
-          const g = ctx.createRadialGradient(baseX, baseY, 0, baseX, baseY, Math.max(zoom * 1.5, 4 + k * 3));
+          const g = ctx.createRadialGradient(
+            baseX,
+            baseY,
+            0,
+            baseX,
+            baseY,
+            Math.max(zoom * 1.5, 4 + k * 3),
+          );
           g.addColorStop(0, `rgba(235,255,225,${0.45 + 0.45 * k})`);
           g.addColorStop(0.4, "rgba(204,255,0,0.5)");
           g.addColorStop(1, "rgba(204,255,0,0)");
           ctx.fillStyle = g;
           ctx.beginPath();
-          ctx.arc(baseX, baseY, Math.max(zoom * 1.5, 4 + k * 3), 0, Math.PI * 2);
+          ctx.arc(
+            baseX,
+            baseY,
+            Math.max(zoom * 1.5, 4 + k * 3),
+            0,
+            Math.PI * 2,
+          );
           ctx.fill();
         }
         ctx.restore();
@@ -781,7 +1108,13 @@ function CosmicCanvas({ route, phase, researchStart, enteredFromHome }) {
     };
   }, [stateRef]);
 
-  return <canvas ref={canvasRef} className={`cosmic-canvas cosmic-${phase}`} aria-hidden="true" />;
+  return (
+    <canvas
+      ref={canvasRef}
+      className={`cosmic-canvas cosmic-${phase}`}
+      aria-hidden="true"
+    />
+  );
 }
 
 function Navigation({
@@ -795,16 +1128,41 @@ function Navigation({
 }) {
   return (
     <nav>
-      <a href="/" className="logo" aria-label="Rewrite Lab home" onClick={onNavigateHome}>
+      <a
+        href="/"
+        className="logo"
+        aria-label="Rewrite Lab home"
+        onClick={onNavigateHome}
+      >
         <img src="/img/rewrite.png" alt="Rewrite Lab" />
       </a>
       <div className="nav-controls">
         <div className="nav-links">
-          <a href="/#about" onClick={(event) => onNavigateHome(event, "about")}>About</a>
-          <a href="/#platforms" onClick={(event) => onNavigateHome(event, "platforms")}>Platforms</a>
-          <a href="/#team" onClick={(event) => onNavigateHome(event, "team")}>Team</a>
-          <a href="/#sponsor" onClick={(event) => onNavigateHome(event, "sponsor")}>Sponsors</a>
-          <a className={route === ROUTE_RESEARCH ? "active" : ""} href="/research" onClick={onNavigateResearch}>Researchs</a>
+          <a href="/#about" onClick={(event) => onNavigateHome(event, "about")}>
+            About
+          </a>
+          <a
+            href="/#platforms"
+            onClick={(event) => onNavigateHome(event, "platforms")}
+          >
+            Platforms
+          </a>
+          <a href="/#team" onClick={(event) => onNavigateHome(event, "team")}>
+            Team
+          </a>
+          <a
+            href="/#sponsor"
+            onClick={(event) => onNavigateHome(event, "sponsor")}
+          >
+            Sponsors
+          </a>
+          <a
+            className={route === ROUTE_RESEARCH ? "active" : ""}
+            href="/research"
+            onClick={onNavigateResearch}
+          >
+            Researchs
+          </a>
         </div>
         {showResearchLanguages && (
           <div className="research-language-nav" aria-label="Research language">
@@ -832,15 +1190,22 @@ function HomePage({ pauseMini = false }) {
     <main className="page home-page">
       <section id="hero" className="home-hero">
         <div className="hero-content">
-          <h1 className="hero-title">REWRITE<br /><span>LAB</span></h1>
+          <h1 className="hero-title">
+            REWRITE
+            <br />
+            <span>LAB</span>
+          </h1>
           <div className="hero-bottom-grid">
             <div className="hero-slogan">
-              "We make what we learn through research understandable to everyone,<br />
-              and by sharing it transparently, we build a deeper web hacking ecosystem."
+              "We make what we learn through research understandable to
+              everyone,
+              <br />
+              and by sharing it transparently, we build a deeper web hacking
+              ecosystem."
             </div>
             <div className="hero-desc">
-              Global high-tier hackers building a bidirectional growth community through
-              deep, uncompromised web security research.
+              Global high-tier hackers building a bidirectional growth community
+              through deep, uncompromised web security research.
             </div>
           </div>
         </div>
@@ -849,12 +1214,32 @@ function HomePage({ pauseMini = false }) {
         <span className="section-tag">01. Identity</span>
         <h2 className="section-title">Beyond The Surface</h2>
         <div className="about-grid">
-          <div className="huge-text reveal">We avoid shallow summaries<br />and abstract explanations.<br /><br />We dig into <span>even the smallest issue others overlook</span> to clearly analyze the full complexity of hacking.</div>
+          <div className="huge-text reveal">
+            We avoid shallow summaries
+            <br />
+            and abstract explanations.
+            <br />
+            <br />
+            We dig into <span>even the smallest issue others overlook</span> to
+            clearly analyze the full complexity of hacking.
+          </div>
           <div className="about-details reveal">
-            <p>Rewrite Lab is a pure research team made up of web security specialists proven through repeated results in globally recognized competitions. Our research aims to raise the baseline of shared knowledge and build an ecosystem where web hackers around the world can access high-quality information and grow together.</p>
+            <p>
+              Rewrite Lab is a pure research team made up of web security
+              specialists proven through repeated results in globally recognized
+              competitions. Our research aims to raise the baseline of shared
+              knowledge and build an ecosystem where web hackers around the
+              world can access high-quality information and grow together.
+            </p>
             <div className="stat-grid">
-              <div className="stat-item"><h4>HIGH-TIER</h4><p>Global Hackers</p></div>
-              <div className="stat-item"><h4>100%</h4><p>Transparent Sharing</p></div>
+              <div className="stat-item">
+                <h4>HIGH-TIER</h4>
+                <p>Global Hackers</p>
+              </div>
+              <div className="stat-item">
+                <h4>100%</h4>
+                <p>Transparent Sharing</p>
+              </div>
             </div>
           </div>
         </div>
@@ -863,11 +1248,29 @@ function HomePage({ pauseMini = false }) {
         <span className="section-tag">02. Ecosystem</span>
         <h2 className="section-title">Our Platforms</h2>
         <div className="platform-cards">
-          <PlatformCard title="RESEARCH" href="https://research.rewritelab.org" button="Explore Research" pauseMini={pauseMini}>
-            We break down advanced web hacking techniques, vulnerability analysis, and deeper research in a way that stays accessible without losing rigor. By publishing clear reports on knowledge that used to stay within a small circle, we make learning transparent and available to anyone.
+          <PlatformCard
+            title="RESEARCH"
+            href="https://research.rewritelab.org"
+            button="Explore Research"
+            pauseMini={pauseMini}
+          >
+            We break down advanced web hacking techniques, vulnerability
+            analysis, and deeper research in a way that stays accessible without
+            losing rigor. By publishing clear reports on knowledge that used to
+            stay within a small circle, we make learning transparent and
+            available to anyone.
           </PlatformCard>
-          <PlatformCard title="WARGAME" href="https://wargame.rewritelab.org" button="Enter Wargame" variant="wargame" pauseMini={pauseMini}>
-            Our researchers, backed by extensive competitive and community experience, build validated web hacking challenges designed to sharpen problem-solving ability and technical insight, and we run an in-house platform open to everyone.
+          <PlatformCard
+            title="WARGAME"
+            href="https://wargame.rewritelab.org"
+            button="Enter Wargame"
+            variant="wargame"
+            pauseMini={pauseMini}
+          >
+            Our researchers, backed by extensive competitive and community
+            experience, build validated web hacking challenges designed to
+            sharpen problem-solving ability and technical insight, and we run an
+            in-house platform open to everyone.
           </PlatformCard>
         </div>
       </section>
@@ -876,13 +1279,29 @@ function HomePage({ pauseMini = false }) {
         <h2 className="section-title">The Researchers</h2>
         <div className="team-grid">
           {teamMembers.map((member, index) => (
-            <div className="team-member reveal" style={{ transitionDelay: `${(index % 3) * 0.1}s` }} key={member.name}>
-              {member.img ? <div className="t-profile"><img src={member.img} alt={member.name} /></div> : <div className="t-profile is-empty" aria-hidden="true" />}
+            <div
+              className="team-member reveal"
+              style={{ transitionDelay: `${(index % 3) * 0.1}s` }}
+              key={member.name}
+            >
+              {member.img ? (
+                <div className="t-profile">
+                  <img src={member.img} alt={member.name} />
+                </div>
+              ) : (
+                <div className="t-profile is-empty" aria-hidden="true" />
+              )}
               <div className="t-info">
                 <div className="t-role">// {member.role}</div>
                 <div className="t-name">{member.name}</div>
                 <div className="t-quote">"{member.quote}"</div>
-                <div className="t-tags">{member.tags.map((tag) => <span className="t-tag" key={tag}>{tag}</span>)}</div>
+                <div className="t-tags">
+                  {member.tags.map((tag) => (
+                    <span className="t-tag" key={tag}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           ))}
@@ -893,9 +1312,23 @@ function HomePage({ pauseMini = false }) {
         <h2 className="section-title">Support & FAQ</h2>
         <SponsorMarquee />
         <div className="qna-container">
-          <Qna q="Is Rewrite Lab a for-profit security company?">No. We are not a profit-driven company. Rewrite Lab was founded by top web hackers from around the world who voluntarily came together to push the limits of security research and transparently share that knowledge with the community. We are a pure research lab.</Qna>
-          <Qna q="How are sponsorship funds used?">Every contribution is used transparently to support high-quality research content, maintenance of our public wargame infrastructure, and seminars and conferences that help grow the global web hacking community, building a sustainable cycle of knowledge sharing.</Qna>
-          <Qna q="Do you recruit team members on a rolling basis?">We do not recruit on a rolling basis. In general, we open recruiting twice a year, once in the first half and once later in the year. We are not currently recruiting additional researchers.</Qna>
+          <Qna q="Is Rewrite Lab a for-profit security company?">
+            No. We are not a profit-driven company. Rewrite Lab was founded by
+            top web hackers from around the world who voluntarily came together
+            to push the limits of security research and transparently share that
+            knowledge with the community. We are a pure research lab.
+          </Qna>
+          <Qna q="How are sponsorship funds used?">
+            Every contribution is used transparently to support high-quality
+            research content, maintenance of our public wargame infrastructure,
+            and seminars and conferences that help grow the global web hacking
+            community, building a sustainable cycle of knowledge sharing.
+          </Qna>
+          <Qna q="Do you recruit team members on a rolling basis?">
+            We do not recruit on a rolling basis. In general, we open recruiting
+            twice a year, once in the first half and once later in the year. We
+            are not currently recruiting additional researchers.
+          </Qna>
         </div>
       </section>
       <Footer />
@@ -909,7 +1342,9 @@ function PlatformCard({ title, href, button, variant, pauseMini, children }) {
       <div className="card-content">
         <h3 className="card-title">{title}</h3>
         <p className="card-desc">{children}</p>
-        <a href={href} target="_blank" rel="noreferrer" className="btn">{button}</a>
+        <a href={href} target="_blank" rel="noreferrer" className="btn">
+          {button}
+        </a>
       </div>
       <div className="card-visual">
         <MiniCanvas variant={variant} paused={pauseMini} />
@@ -1119,7 +1554,12 @@ function MiniCanvas({ variant, paused = false }) {
         ctx.stroke();
         ctx.shadowBlur = 0;
 
-        const grad = ctx.createLinearGradient(0, actualScanY, 0, actualScanY - scanDir * 60);
+        const grad = ctx.createLinearGradient(
+          0,
+          actualScanY,
+          0,
+          actualScanY - scanDir * 60,
+        );
         grad.addColorStop(0, "rgba(204, 255, 0, 0.15)");
         grad.addColorStop(1, "rgba(204, 255, 0, 0)");
         ctx.fillStyle = grad;
@@ -1147,9 +1587,12 @@ function MiniCanvas({ variant, paused = false }) {
     }
     resize();
     window.addEventListener("resize", resize);
-    const observer = new IntersectionObserver((entries) => {
-      visibleRef.current = entries.some((entry) => entry.isIntersecting);
-    }, { rootMargin: "120px" });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        visibleRef.current = entries.some((entry) => entry.isIntersecting);
+      },
+      { rootMargin: "120px" },
+    );
     observer.observe(canvas);
     raf = requestAnimationFrame(draw);
     return () => {
@@ -1174,7 +1617,12 @@ function SponsorMarquee() {
         {[0, 1].map((group) => (
           <div className="marquee-group" aria-hidden={group === 1} key={group}>
             {logos.map(([src, alt, cls], index) => (
-              <div className={`sponsor-logo ${cls}`} key={`${src}-${group}-${index}`}><img src={`/img/${src}`} alt={alt} /></div>
+              <div
+                className={`sponsor-logo ${cls}`}
+                key={`${src}-${group}-${index}`}
+              >
+                <img src={`/img/${src}`} alt={alt} />
+              </div>
             ))}
           </div>
         ))}
@@ -1196,28 +1644,94 @@ function ResearchHeader({ lang, setLang, onNavigateHome, onNavigateResearch }) {
   return (
     <header className="research-original-header">
       <div className="research-header-inner">
-        <a href="/" className="research-brand" aria-label="Rewrite Lab home" onClick={onNavigateHome}>
+        <a
+          href="/"
+          className="research-brand"
+          aria-label="Rewrite Lab home"
+          onClick={onNavigateHome}
+        >
           <span className="research-brand-mark" />
           <span className="research-brand-solid">Rewrite</span>
           <span className="research-brand-stroke">Lab</span>
         </a>
         <nav className="research-header-nav" aria-label="Research navigation">
-          <a href="/#about" onClick={(event) => onNavigateHome(event, "about")}>About</a>
-          <a href="/#platforms" onClick={(event) => onNavigateHome(event, "platforms")}>Platforms</a>
-          <a href="/#team" onClick={(event) => onNavigateHome(event, "team")}>Team</a>
-          <a href="/#sponsor" onClick={(event) => onNavigateHome(event, "sponsor")}>Sponsors</a>
-          <a className="is-active" href="/research" onClick={onNavigateResearch}>Research<span /></a>
+          <a href="/#about" onClick={(event) => onNavigateHome(event, "about")}>
+            About
+          </a>
+          <a
+            href="/#platforms"
+            onClick={(event) => onNavigateHome(event, "platforms")}
+          >
+            Platforms
+          </a>
+          <a href="/#team" onClick={(event) => onNavigateHome(event, "team")}>
+            Team
+          </a>
+          <a
+            href="/#sponsor"
+            onClick={(event) => onNavigateHome(event, "sponsor")}
+          >
+            Sponsors
+          </a>
+          <a
+            className="is-active"
+            href="/research"
+            onClick={onNavigateResearch}
+          >
+            Research
+            <span />
+          </a>
         </nav>
         <div className="research-header-actions">
           <div className="research-lang-toggle" aria-label="Language">
-            <button className={lang === "EN" ? "is-active" : ""} type="button" onClick={() => setLang("EN")}>EN</button>
-            <button className={lang === "KO" ? "is-active" : ""} type="button" onClick={() => setLang("KO")}>KO</button>
+            <button
+              className={lang === "EN" ? "is-active" : ""}
+              type="button"
+              onClick={() => setLang("EN")}
+            >
+              EN
+            </button>
+            <button
+              className={lang === "KO" ? "is-active" : ""}
+              type="button"
+              onClick={() => setLang("KO")}
+            >
+              KO
+            </button>
           </div>
-          <a href="https://github.com/rewrite-lab" target="_blank" rel="noopener noreferrer" className="research-social" aria-label="Rewrite Lab GitHub">
-            <svg width="17" height="17" viewBox="0 0 16 16" fill="#b8b8b8" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z" /></svg>
+          <a
+            href="https://github.com/rewrite-lab"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="research-social"
+            aria-label="Rewrite Lab GitHub"
+          >
+            <svg
+              width="17"
+              height="17"
+              viewBox="0 0 16 16"
+              fill="#b8b8b8"
+              aria-hidden="true"
+            >
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z" />
+            </svg>
           </a>
-          <a href="https://x.com/rewritelab" target="_blank" rel="noopener noreferrer" className="research-social" aria-label="Rewrite Lab X">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="#b8b8b8" aria-hidden="true"><path d="M18.9 1.15h3.68l-8.04 9.19L24 22.85h-7.41l-5.8-7.58-6.64 7.58H.46l8.6-9.83L0 1.15h7.6l5.24 6.93 6.06-6.93zm-1.29 19.5h2.04L6.48 3.24H4.29L17.61 20.65z" /></svg>
+          <a
+            href="https://x.com/rewritelab"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="research-social"
+            aria-label="Rewrite Lab X"
+          >
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="#b8b8b8"
+              aria-hidden="true"
+            >
+              <path d="M18.9 1.15h3.68l-8.04 9.19L24 22.85h-7.41l-5.8-7.58-6.64 7.58H.46l8.6-9.83L0 1.15h7.6l5.24 6.93 6.06-6.93zm-1.29 19.5h2.04L6.48 3.24H4.29L17.61 20.65z" />
+            </svg>
           </a>
         </div>
       </div>
@@ -1230,7 +1744,9 @@ function ResearchPage({ lang, onNavigateHome, onOpenArticle }) {
   const entries = researchCatalog
     .filter((entry) => entry.variants[lang])
     .sort((a, b) => b.number - a.number);
-  const cards = entries.map((entry) => makeResearchCard(entry, lang)).filter(Boolean);
+  const cards = entries
+    .map((entry) => makeResearchCard(entry, lang))
+    .filter(Boolean);
 
   useEffect(() => {
     const preload = () => {
@@ -1251,10 +1767,10 @@ function ResearchPage({ lang, onNavigateHome, onOpenArticle }) {
 
   const t = researchStrings[lang];
   const featured = cards[0];
-  const metaStr = t.meta(cards.length).join("\u2003\u00b7\u2003");
-  const countLabel = lang === "EN"
-    ? `${cards.length} ${cards.length === 1 ? "Entry" : t.entries}`
-    : `${cards.length}${t.entries}`;
+  const countLabel =
+    lang === "EN"
+      ? `${cards.length} ${cards.length === 1 ? "Entry" : t.entries}`
+      : `${cards.length}${t.entries}`;
   return (
     <main className="research-root">
       <section className="research-original-hero" data-hero>
@@ -1267,10 +1783,11 @@ function ResearchPage({ lang, onNavigateHome, onOpenArticle }) {
             </div>
             <h1>
               <span>Open</span>
-              <span>Research<span className="research-cursor">_</span></span>
+              <span>
+                Research<span className="research-cursor">_</span>
+              </span>
             </h1>
             <p>{t.lead}</p>
-            <div className="research-hero-meta">{metaStr}</div>
           </div>
         </div>
       </section>
@@ -1285,7 +1802,13 @@ function ResearchPage({ lang, onNavigateHome, onOpenArticle }) {
           </div>
           <div className="research-count">{countLabel}</div>
         </div>
-        {featured && <FeaturedResearchCard card={featured} t={t} onOpenArticle={onOpenArticle} />}
+        {featured && (
+          <FeaturedResearchCard
+            card={featured}
+            t={t}
+            onOpenArticle={onOpenArticle}
+          />
+        )}
         <div className="research-original-grid">
           {cards.slice(1).map((card, index) => (
             <ResearchGridCard
@@ -1309,18 +1832,32 @@ function ResearchAvatar({ avatar }) {
 
   return (
     <div className="research-avatar" title={avatar.name}>
-      {showImage
-        ? <img src={avatar.image} alt={avatar.name} onError={() => setImageFailed(true)} />
-        : avatar.initials}
+      {showImage ? (
+        <img
+          src={avatar.image}
+          alt={avatar.name}
+          onError={() => setImageFailed(true)}
+        />
+      ) : (
+        avatar.initials
+      )}
     </div>
   );
 }
 
 function ResearchAvatars({ card, featured = false }) {
   return (
-    <div className={featured ? "research-avatars is-featured" : "research-avatars"}>
-      {card.avatars.map((avatar) => <ResearchAvatar avatar={avatar} key={avatar.id} />)}
-      {card.moreCount > 0 && <div className="research-avatar research-avatar-more">+{card.moreCount}</div>}
+    <div
+      className={featured ? "research-avatars is-featured" : "research-avatars"}
+    >
+      {card.avatars.map((avatar) => (
+        <ResearchAvatar avatar={avatar} key={avatar.id} />
+      ))}
+      {card.moreCount > 0 && (
+        <div className="research-avatar research-avatar-more">
+          +{card.moreCount}
+        </div>
+      )}
     </div>
   );
 }
@@ -1332,17 +1869,26 @@ function FeaturedResearchCard({ card, t, onOpenArticle }) {
       href={card.href}
       target={card.isLocal ? undefined : "_blank"}
       rel={card.isLocal ? undefined : "noreferrer"}
-      onClick={card.isLocal ? (event) => onOpenArticle(event, card.id, card.badge) : undefined}
+      onClick={
+        card.isLocal
+          ? (event) => onOpenArticle(event, card.id, card.badge)
+          : undefined
+      }
       onMouseMove={handleResearchCardMove}
       onMouseEnter={handleResearchCardEnter}
       onMouseLeave={handleResearchCardLeave}
     >
       <div className="research-featured-thumb">
-        <div className="research-featured-thumb-bg" style={{ backgroundImage: `url("${card.thumbSrc}")` }} />
+        <div
+          className="research-featured-thumb-bg"
+          style={{ backgroundImage: `url("${card.thumbSrc}")` }}
+        />
         <div className="research-card-gleam" />
       </div>
       <div className="research-featured-body">
-        <div><span className="research-latest">{t.latest}</span></div>
+        <div>
+          <span className="research-latest">{t.latest}</span>
+        </div>
         <div className="research-featured-meta-row">
           <span className="research-featured-num">{card.numStr}</span>
           <div className="research-card-meta-line">
@@ -1373,7 +1919,11 @@ function ResearchGridCard({ card, imagePriority, onOpenArticle }) {
       href={card.href}
       target={card.isLocal ? undefined : "_blank"}
       rel={card.isLocal ? undefined : "noreferrer"}
-      onClick={card.isLocal ? (event) => onOpenArticle(event, card.id, card.badge) : undefined}
+      onClick={
+        card.isLocal
+          ? (event) => onOpenArticle(event, card.id, card.badge)
+          : undefined
+      }
       onMouseMove={handleResearchCardMove}
       onMouseEnter={handleResearchCardEnter}
       onMouseLeave={handleResearchCardLeave}
@@ -1385,7 +1935,9 @@ function ResearchGridCard({ card, imagePriority, onOpenArticle }) {
           decoding="async"
           fetchpriority={imagePriority}
           loading="eager"
-          onError={(event) => { event.currentTarget.hidden = true; }}
+          onError={(event) => {
+            event.currentTarget.hidden = true;
+          }}
         />
         <div className="research-card-gleam" />
         <div className="research-grid-num">{card.numStr}</div>
@@ -1412,16 +1964,36 @@ function ResearchFooter({ t, onNavigateHome }) {
   return (
     <footer className="research-original-footer">
       <div className="research-footer-inner">
-        <div className="research-footer-logo">Rewrite<br />Lab<span>_</span></div>
+        <div className="research-footer-logo">
+          Rewrite
+          <br />
+          Lab<span>_</span>
+        </div>
         <div className="research-footer-main">
           <p>{t.footerTag}</p>
           <div className="research-footer-links">
-            <a href="/" onClick={onNavigateHome}>{t.home}</a>
-            <a href="https://github.com/rewrite-lab" target="_blank" rel="noopener noreferrer">GitHub</a>
-            <a href="https://x.com/rewritelab" target="_blank" rel="noopener noreferrer">Twitter</a>
+            <a href="/" onClick={onNavigateHome}>
+              {t.home}
+            </a>
+            <a
+              href="https://github.com/rewrite-lab"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </a>
+            <a
+              href="https://x.com/rewritelab"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Twitter
+            </a>
           </div>
         </div>
-        <div className="research-copyright">© 2016-2026 Rewrite Lab — All rights reserved</div>
+        <div className="research-copyright">
+          © 2016-2026 Rewrite Lab — All rights reserved
+        </div>
       </div>
     </footer>
   );
@@ -1431,7 +2003,9 @@ function Footer({ research }) {
   return (
     <footer className={research ? "research-footer" : ""}>
       <div className="footer-logo">REWRITE LAB</div>
-      <div className="footer-copy">© 2026 Rewrite Lab. Transparently sharing what we learn.</div>
+      <div className="footer-copy">
+        © 2026 Rewrite Lab. Transparently sharing what we learn.
+      </div>
     </footer>
   );
 }
@@ -1439,7 +2013,9 @@ function Footer({ research }) {
 function App() {
   const [locationState, setLocationState] = useState(currentLocationState);
   const { route, articleNumber, researchLanguage } = locationState;
-  const [phase, setPhase] = useState(() => route === ROUTE_HOME ? "home" : "research");
+  const [phase, setPhase] = useState(() =>
+    route === ROUTE_HOME ? "home" : "research",
+  );
   const [researchStart, setResearchStart] = useState(() => performance.now());
   const [enteredFromHome, setEnteredFromHome] = useState(false);
   const [pageKey, setPageKey] = useState(0);
@@ -1458,7 +2034,11 @@ function App() {
     : null;
   const nextEntry = articleEntry
     ? researchCatalog
-        .filter((entry) => entry.number < articleEntry.number && entry.variants[researchLanguage])
+        .filter(
+          (entry) =>
+            entry.number < articleEntry.number &&
+            entry.variants[researchLanguage],
+        )
         .at(-1) || null
     : null;
   const nextDocument = nextEntry
@@ -1470,7 +2050,8 @@ function App() {
   const nextHref = nextEntry
     ? researchArticleUrl(nextEntry.number, researchLanguage)
     : "";
-  const isArticleRoute = route === ROUTE_ARTICLE && Boolean(articleEntry && articleDescriptor);
+  const isArticleRoute =
+    route === ROUTE_ARTICLE && Boolean(articleEntry && articleDescriptor);
   const availableResearchLanguages = isArticleRoute
     ? articleEntry.languages
     : availableCatalogLanguages;
@@ -1478,7 +2059,8 @@ function App() {
   useEffect(() => {
     if (isArticleRoute) {
       document.title = `${article.title} - Rewrite Lab`;
-      document.documentElement.lang = articleDescriptor.language === "KO" ? "ko" : "en";
+      document.documentElement.lang =
+        articleDescriptor.language === "KO" ? "ko" : "en";
     } else if (route === ROUTE_RESEARCH) {
       document.title = "Rewrite Lab Research | Web Security Publications";
       document.documentElement.lang = researchLanguage === "KO" ? "ko" : "en";
@@ -1486,7 +2068,10 @@ function App() {
       document.title = "Rewrite Lab | Web Security Research Team";
       document.documentElement.lang = "en";
     }
-    document.body.classList.toggle("is-research-route", route === ROUTE_RESEARCH);
+    document.body.classList.toggle(
+      "is-research-route",
+      route === ROUTE_RESEARCH,
+    );
     document.body.classList.toggle("is-article-route", isArticleRoute);
     return () => {
       document.body.classList.remove("is-research-route");
@@ -1498,7 +2083,8 @@ function App() {
     const onPop = () => {
       const next = currentLocationState();
       setLocationState(next);
-      if (next.route !== ROUTE_HOME) storeResearchLanguage(next.researchLanguage);
+      if (next.route !== ROUTE_HOME)
+        storeResearchLanguage(next.researchLanguage);
       setPhase(next.route === ROUTE_HOME ? "home" : "research");
       setEnteredFromHome(false);
       setResearchStart(performance.now());
@@ -1509,93 +2095,132 @@ function App() {
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
-  const navigateHome = useCallback((event, hash) => {
-    event?.preventDefault();
-    const url = hash ? `/#${hash}` : "/";
-    window.history.pushState({ route: ROUTE_HOME }, "", url);
-    setLocationState({ route: ROUTE_HOME, articleNumber: null, researchLanguage });
-    setPhase("home");
-    setEnteredFromHome(false);
-    setPageKey((k) => k + 1);
-    requestAnimationFrame(() => {
-      if (hash) document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
-      else window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-  }, [researchLanguage]);
+  const navigateHome = useCallback(
+    (event, hash) => {
+      event?.preventDefault();
+      const url = hash ? `/#${hash}` : "/";
+      window.history.pushState({ route: ROUTE_HOME }, "", url);
+      setLocationState({
+        route: ROUTE_HOME,
+        articleNumber: null,
+        researchLanguage,
+      });
+      setPhase("home");
+      setEnteredFromHome(false);
+      setPageKey((k) => k + 1);
+      requestAnimationFrame(() => {
+        if (hash)
+          document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
+        else window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    },
+    [researchLanguage],
+  );
 
-  const navigateResearch = useCallback((event) => {
-    event?.preventDefault();
-    if (route === ROUTE_RESEARCH) return;
-    const nextLanguage = availableCatalogLanguages.includes(researchLanguage)
-      ? researchLanguage
-      : availableCatalogLanguages[0] || "EN";
-    window.history.pushState(
-      { route: ROUTE_RESEARCH, researchLanguage: nextLanguage },
-      "",
-      researchListUrl(nextLanguage),
-    );
-    storeResearchLanguage(nextLanguage);
-    setEnteredFromHome(route === ROUTE_HOME);
-    setLocationState({ route: ROUTE_RESEARCH, articleNumber: null, researchLanguage: nextLanguage });
-    setPhase("research");
-    setResearchStart(performance.now());
-    setPageKey((k) => k + 1);
-    window.scrollTo(0, 0);
-  }, [researchLanguage, route]);
+  const navigateResearch = useCallback(
+    (event) => {
+      event?.preventDefault();
+      if (route === ROUTE_RESEARCH) return;
+      const nextLanguage = availableCatalogLanguages.includes(researchLanguage)
+        ? researchLanguage
+        : availableCatalogLanguages[0] || "EN";
+      window.history.pushState(
+        { route: ROUTE_RESEARCH, researchLanguage: nextLanguage },
+        "",
+        researchListUrl(nextLanguage),
+      );
+      storeResearchLanguage(nextLanguage);
+      setEnteredFromHome(route === ROUTE_HOME);
+      setLocationState({
+        route: ROUTE_RESEARCH,
+        articleNumber: null,
+        researchLanguage: nextLanguage,
+      });
+      setPhase("research");
+      setResearchStart(performance.now());
+      setPageKey((k) => k + 1);
+      window.scrollTo(0, 0);
+    },
+    [researchLanguage, route],
+  );
 
-  const openArticle = useCallback((event, nextArticleNumber, preferredLanguage = "EN") => {
-    const nextEntryToOpen = getResearchEntry(nextArticleNumber);
-    const nextLanguage = normalizeResearchLanguage(preferredLanguage) || "EN";
-    const nextDocumentToOpen = getResearchDocument(nextEntryToOpen, nextLanguage, false);
-    if (!nextDocumentToOpen) return;
-    event?.preventDefault();
-    window.history.pushState(
-      { route: ROUTE_ARTICLE, articleNumber: nextArticleNumber, researchLanguage: nextLanguage },
-      "",
-      researchArticleUrl(nextArticleNumber, nextLanguage),
-    );
-    storeResearchLanguage(nextLanguage);
-    setLocationState({
-      route: ROUTE_ARTICLE,
-      articleNumber: nextArticleNumber,
-      researchLanguage: nextLanguage,
-    });
-    setPhase("research");
-    setEnteredFromHome(false);
-    setPageKey((k) => k + 1);
-    window.scrollTo(0, 0);
-  }, []);
+  const openArticle = useCallback(
+    (event, nextArticleNumber, preferredLanguage = "EN") => {
+      const nextEntryToOpen = getResearchEntry(nextArticleNumber);
+      const nextLanguage = normalizeResearchLanguage(preferredLanguage) || "EN";
+      const nextDocumentToOpen = getResearchDocument(
+        nextEntryToOpen,
+        nextLanguage,
+        false,
+      );
+      if (!nextDocumentToOpen) return;
+      event?.preventDefault();
+      window.history.pushState(
+        {
+          route: ROUTE_ARTICLE,
+          articleNumber: nextArticleNumber,
+          researchLanguage: nextLanguage,
+        },
+        "",
+        researchArticleUrl(nextArticleNumber, nextLanguage),
+      );
+      storeResearchLanguage(nextLanguage);
+      setLocationState({
+        route: ROUTE_ARTICLE,
+        articleNumber: nextArticleNumber,
+        researchLanguage: nextLanguage,
+      });
+      setPhase("research");
+      setEnteredFromHome(false);
+      setPageKey((k) => k + 1);
+      window.scrollTo(0, 0);
+    },
+    [],
+  );
 
-  const changeResearchLanguage = useCallback((nextValue) => {
-    const nextLanguage = normalizeResearchLanguage(nextValue);
-    if (!nextLanguage || nextLanguage === researchLanguage) return;
+  const changeResearchLanguage = useCallback(
+    (nextValue) => {
+      const nextLanguage = normalizeResearchLanguage(nextValue);
+      if (!nextLanguage || nextLanguage === researchLanguage) return;
 
-    const entry = route === ROUTE_ARTICLE ? getResearchEntry(articleNumber) : null;
-    const languages = entry ? entry.languages : availableCatalogLanguages;
-    if (!languages.includes(nextLanguage)) return;
+      const entry =
+        route === ROUTE_ARTICLE ? getResearchEntry(articleNumber) : null;
+      const languages = entry ? entry.languages : availableCatalogLanguages;
+      if (!languages.includes(nextLanguage)) return;
 
-    const nextUrl = entry
-      ? researchArticleUrl(entry.number, nextLanguage)
-      : researchListUrl(nextLanguage);
-    window.history.pushState(
-      { route, articleNumber: entry?.number || null, researchLanguage: nextLanguage },
-      "",
-      nextUrl,
-    );
-    storeResearchLanguage(nextLanguage);
-    setLocationState({
-      route,
-      articleNumber: entry?.number || null,
-      researchLanguage: nextLanguage,
-    });
-    setEnteredFromHome(false);
-    setPageKey((key) => key + 1);
-  }, [articleNumber, researchLanguage, route]);
+      const nextUrl = entry
+        ? researchArticleUrl(entry.number, nextLanguage)
+        : researchListUrl(nextLanguage);
+      window.history.pushState(
+        {
+          route,
+          articleNumber: entry?.number || null,
+          researchLanguage: nextLanguage,
+        },
+        "",
+        nextUrl,
+      );
+      storeResearchLanguage(nextLanguage);
+      setLocationState({
+        route,
+        articleNumber: entry?.number || null,
+        researchLanguage: nextLanguage,
+      });
+      setEnteredFromHome(false);
+      setPageKey((key) => key + 1);
+    },
+    [articleNumber, researchLanguage, route],
+  );
 
   return (
     <>
       {!isArticleRoute && (
-        <CosmicCanvas route={route} phase={phase} researchStart={researchStart} enteredFromHome={enteredFromHome} />
+        <CosmicCanvas
+          route={route}
+          phase={phase}
+          researchStart={researchStart}
+          enteredFromHome={enteredFromHome}
+        />
       )}
       <Navigation
         route={isArticleRoute ? ROUTE_RESEARCH : route}
@@ -1607,7 +2232,11 @@ function App() {
         onResearchLanguageChange={changeResearchLanguage}
       />
       {isArticleRoute ? (
-        <Suspense fallback={<div className="article-loading-shell" aria-hidden="true" />}>
+        <Suspense
+          fallback={
+            <div className="article-loading-shell" aria-hidden="true" />
+          }
+        >
           <ArticlePage
             article={article}
             documentDescriptor={articleDescriptor}
@@ -1615,14 +2244,28 @@ function App() {
             nextArticle={nextArticle}
             nextHref={nextHref}
             onNavigateResearch={navigateResearch}
-            onOpenNext={nextEntry ? (event) => openArticle(event, nextEntry.number, researchLanguage) : undefined}
+            onOpenNext={
+              nextEntry
+                ? (event) =>
+                    openArticle(event, nextEntry.number, researchLanguage)
+                : undefined
+            }
           />
         </Suspense>
       ) : (
-        <div className={`route-shell route-${route} phase-${phase}`} key={route}>
-          {route === ROUTE_RESEARCH
-            ? <ResearchPage lang={researchLanguage} onNavigateHome={navigateHome} onOpenArticle={openArticle} />
-            : <HomePage />}
+        <div
+          className={`route-shell route-${route} phase-${phase}`}
+          key={route}
+        >
+          {route === ROUTE_RESEARCH ? (
+            <ResearchPage
+              lang={researchLanguage}
+              onNavigateHome={navigateHome}
+              onOpenArticle={openArticle}
+            />
+          ) : (
+            <HomePage />
+          )}
         </div>
       )}
     </>
