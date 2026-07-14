@@ -8,7 +8,7 @@ const frontmatterModules = import.meta.glob("./content/research/*.md", {
 
 const markdownLoaders = import.meta.glob("./content/research/*.md", {
   import: "default",
-  query: "?raw",
+  query: "?research-document",
 });
 
 const LANGUAGE_PREFIX = /^\[(?:ENG|EN|KOR|KR|KO)\]\s*/i;

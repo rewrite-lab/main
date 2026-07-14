@@ -4,16 +4,37 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { parse as parseYaml } from "yaml";
 
-function researchFrontmatterPlugin() {
+function researchMarkdownPlugin() {
+  let researchDirectory;
+
   return {
-    name: "research-frontmatter",
+    name: "research-markdown",
     enforce: "pre",
+    configResolved(config) {
+      researchDirectory = path.resolve(config.root, "src/content/research");
+    },
     async load(id) {
       const [filePath, query = ""] = id.split("?", 2);
-      if (!query.split("&").includes("frontmatter")) return null;
+      const queryParts = new Set(query.split("&"));
+      const loadsFrontmatter = queryParts.has("frontmatter");
+      const loadsRawMarkdown = queryParts.has("research-document");
+      const relativePath = path.relative(researchDirectory, filePath);
+      const isResearchMarkdown =
+        filePath.endsWith(".md") &&
+        relativePath !== "" &&
+        !relativePath.startsWith(`..${path.sep}`) &&
+        !path.isAbsolute(relativePath);
+
+      if ((!loadsFrontmatter && !loadsRawMarkdown) || !isResearchMarkdown) {
+        return null;
+      }
 
       this.addWatchFile(filePath);
       const source = (await readFile(filePath, "utf8")).replace(/\r\n?/g, "\n");
+      if (loadsRawMarkdown) {
+        return `export default ${JSON.stringify(source)};`;
+      }
+
       const match = source.match(/^---\n([\s\S]*?)\n---(?:\n|$)/);
 
       if (!match) {
@@ -53,7 +74,7 @@ function staticImagesPlugin() {
 }
 
 export default defineConfig({
-  plugins: [researchFrontmatterPlugin(), staticImagesPlugin(), react()],
+  plugins: [researchMarkdownPlugin(), staticImagesPlugin(), react()],
   build: {
     rollupOptions: {
       output: {
