@@ -375,24 +375,53 @@ function nestToc(items) {
   return roots;
 }
 
-function ArticleToc({ items, activeId, onSelect }) {
+function ArticleToc({ items, activeId, onSelect, placement = "desktop" }) {
   const nestedItems = useMemo(() => nestToc(items), [items]);
+  const [expanded, setExpanded] = useState(false);
+  const isMobile = placement === "mobile";
+  const listId = `article-toc-list-${placement}`;
+
+  useEffect(() => {
+    setExpanded(false);
+  }, [items]);
+
   if (!items.length) return null;
 
   const renderLink = (item) => (
     <a
       className={activeId === item.id ? "is-active" : ""}
       href={`#${item.id}`}
-      onClick={(event) => onSelect(event, item.id)}
+      onClick={(event) => {
+        if (isMobile) setExpanded(false);
+        onSelect(event, item.id);
+      }}
     >
       {item.label}
     </a>
   );
 
   return (
-    <aside className="article-toc" aria-label="Table of contents">
-      <div className="article-toc-label">Sections ▾</div>
-      <ol>
+    <aside
+      className={`article-toc article-toc-${placement}${!isMobile || expanded ? " is-open" : ""}`}
+      aria-label="Table of contents"
+    >
+      {isMobile ? (
+        <button
+          className="article-toc-label article-toc-label-mobile"
+          type="button"
+          aria-controls={listId}
+          aria-expanded={expanded}
+          onClick={() => setExpanded((open) => !open)}
+        >
+          <span>Sections</span>
+          <span className="article-toc-chevron" aria-hidden="true">⌄</span>
+        </button>
+      ) : (
+        <div className="article-toc-label article-toc-label-desktop">
+          Sections ▾
+        </div>
+      )}
+      <ol id={listId}>
         {nestedItems.map((item) => (
           <li key={item.id}>
             {renderLink(item)}
@@ -510,6 +539,13 @@ function ArticleDocumentPage({
               <ArticleThumbnail title={article.title} src={document.thumbnail} />
               <ResearchCrew authors={authors} date={document.date || article.date} />
             </header>
+
+            <ArticleToc
+              items={document.toc}
+              activeId={activeId}
+              onSelect={selectTocItem}
+              placement="mobile"
+            />
 
             <ReactMarkdown
               components={markdownComponents}

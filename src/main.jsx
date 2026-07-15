@@ -24,6 +24,8 @@ const ROUTE_RESEARCH = "research";
 const ROUTE_ARTICLE = "article";
 const RESEARCH_ENTRY_MS = 1250;
 const RESEARCH_TIMELINE_RATE = 1.5;
+const MOBILE_COSMIC_MEDIA =
+  "(max-width: 820px), (max-width: 1024px) and (max-height: 500px)";
 const GLOBE_NODE_COUNT = 350;
 const STAR_COUNT = 620;
 
@@ -436,6 +438,26 @@ function useLatest(value) {
     ref.current = value;
   }, [value]);
   return ref;
+}
+
+function useMediaQuery(query) {
+  const [matches, setMatches] = useState(() =>
+    window.matchMedia(query).matches,
+  );
+
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    const update = () => setMatches(media.matches);
+    update();
+    if (media.addEventListener) media.addEventListener("change", update);
+    else media.addListener(update);
+    return () => {
+      if (media.removeEventListener) media.removeEventListener("change", update);
+      else media.removeListener(update);
+    };
+  }, [query]);
+
+  return matches;
 }
 
 function CosmicCanvas({ route, phase, researchStart, enteredFromHome }) {
@@ -976,41 +998,86 @@ function CosmicCanvas({ route, phase, researchStart, enteredFromHome }) {
         }
       }
 
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const compactLandscape =
+        viewportWidth <= 1024 && viewportHeight <= 500;
+      const stackedCosmicLayout =
+        viewportWidth <= 820 ||
+        (viewportWidth <= 1024 && viewportHeight > viewportWidth) ||
+        compactLandscape;
 
-      const home = {
-        x: window.innerWidth * 0.75,
-        y: window.innerHeight * 0.45,
-        r: Math.min(window.innerWidth, window.innerHeight) * 0.4,
-      };
+      ctx.clearRect(0, 0, viewportWidth, viewportHeight);
+
+      const home = stackedCosmicLayout
+        ? {
+            x: viewportWidth * 0.64,
+            y: viewportHeight * 0.27,
+            r: compactLandscape
+              ? Math.min(viewportWidth * 0.18, viewportHeight * 0.24)
+              : Math.min(viewportWidth * 0.29, viewportHeight * 0.16),
+          }
+        : {
+            x: viewportWidth * 0.75,
+            y: viewportHeight * 0.45,
+            r: Math.min(viewportWidth, viewportHeight) * 0.4,
+          };
       const hero = document.querySelector("[data-hero]");
       const heroWidth = hero?.clientWidth;
       const heroHeight = hero?.clientHeight;
       const researchCanvas =
         heroWidth && heroHeight
-          ? {
-              left: hero.offsetLeft + heroWidth * 0.3,
-              top: hero.offsetTop,
-              width: heroWidth * 0.7,
-              height: heroHeight,
-            }
-          : {
-              left: window.innerWidth * 0.3,
-              top: 70,
-              width: window.innerWidth * 0.7,
-              height: Math.min(window.innerHeight * 0.9, 840),
-            };
-      const research = {
-        x: researchCanvas.left + researchCanvas.width * 0.71,
-        y: researchCanvas.top + researchCanvas.height * 0.5,
-        r: researchCanvas.height * 0.33,
-      };
+          ? stackedCosmicLayout
+            ? {
+                left: hero.offsetLeft,
+                top: hero.offsetTop,
+                width: heroWidth,
+                height: Math.min(heroHeight * 0.46, viewportHeight * 0.48),
+              }
+            : {
+                left: hero.offsetLeft + heroWidth * 0.3,
+                top: hero.offsetTop,
+                width: heroWidth * 0.7,
+                height: heroHeight,
+              }
+          : stackedCosmicLayout
+            ? {
+                left: 0,
+                top: 70,
+                width: viewportWidth,
+                height: viewportHeight * 0.48,
+              }
+            : {
+                left: viewportWidth * 0.3,
+                top: 70,
+                width: viewportWidth * 0.7,
+                height: Math.min(viewportHeight * 0.9, 840),
+              };
+      const research = stackedCosmicLayout
+        ? {
+            x: researchCanvas.left + researchCanvas.width * 0.65,
+            y: researchCanvas.top + researchCanvas.height * 0.46,
+            r: compactLandscape
+              ? Math.min(
+                  researchCanvas.width * 0.15,
+                  researchCanvas.height * 0.42,
+                )
+              : Math.min(
+                  researchCanvas.width * 0.24,
+                  researchCanvas.height * 0.28,
+                ),
+          }
+        : {
+            x: researchCanvas.left + researchCanvas.width * 0.71,
+            y: researchCanvas.top + researchCanvas.height * 0.5,
+            r: researchCanvas.height * 0.33,
+          };
 
       if (current.phase === "home") {
         drawGlobe(home.x, home.y, home.r, rotRef.current, "reveal");
       } else {
         const researchVisible =
-          researchCanvas.top < window.innerHeight &&
+          researchCanvas.top < viewportHeight &&
           researchCanvas.top + researchCanvas.height > 0;
         if (!researchVisible) {
           raf = requestAnimationFrame(draw);
@@ -1126,40 +1193,65 @@ function Navigation({
   availableResearchLanguages = [],
   onResearchLanguageChange,
 }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [route]);
+
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [menuOpen]);
+
+  const navigateHome = (event, hash) => {
+    setMenuOpen(false);
+    onNavigateHome(event, hash);
+  };
+
+  const navigateResearch = (event) => {
+    setMenuOpen(false);
+    onNavigateResearch(event);
+  };
+
   return (
-    <nav>
+    <nav className={`site-navigation${menuOpen ? " is-menu-open" : ""}`}>
       <a
         href="/"
         className="logo"
         aria-label="Rewrite Lab home"
-        onClick={onNavigateHome}
+        onClick={navigateHome}
       >
         <img src="/img/rewrite.png" alt="Rewrite Lab" />
       </a>
       <div className="nav-controls">
-        <div className="nav-links">
-          <a href="/#about" onClick={(event) => onNavigateHome(event, "about")}>
+        <div className="nav-links" id="site-navigation-links">
+          <a href="/#about" onClick={(event) => navigateHome(event, "about")}>
             About
           </a>
           <a
             href="/#platforms"
-            onClick={(event) => onNavigateHome(event, "platforms")}
+            onClick={(event) => navigateHome(event, "platforms")}
           >
             Platforms
           </a>
-          <a href="/#team" onClick={(event) => onNavigateHome(event, "team")}>
+          <a href="/#team" onClick={(event) => navigateHome(event, "team")}>
             Team
           </a>
           <a
             href="/#sponsor"
-            onClick={(event) => onNavigateHome(event, "sponsor")}
+            onClick={(event) => navigateHome(event, "sponsor")}
           >
             Sponsors
           </a>
           <a
             className={route === ROUTE_RESEARCH ? "active" : ""}
             href="/research"
-            onClick={onNavigateResearch}
+            onClick={navigateResearch}
           >
             Researchs
           </a>
@@ -1179,6 +1271,16 @@ function Navigation({
             ))}
           </div>
         )}
+        <button
+          className="mobile-nav-toggle"
+          type="button"
+          aria-label={menuOpen ? "Close navigation" : "Open navigation"}
+          aria-controls="site-navigation-links"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          <span aria-hidden="true">{menuOpen ? "×" : "☰"}</span>
+        </button>
       </div>
     </nav>
   );
@@ -2013,6 +2115,7 @@ function Footer({ research }) {
 function App() {
   const [locationState, setLocationState] = useState(currentLocationState);
   const { route, articleNumber, researchLanguage } = locationState;
+  const disableMobileCosmic = useMediaQuery(MOBILE_COSMIC_MEDIA);
   const [phase, setPhase] = useState(() =>
     route === ROUTE_HOME ? "home" : "research",
   );
@@ -2214,7 +2317,7 @@ function App() {
 
   return (
     <>
-      {!isArticleRoute && (
+      {!isArticleRoute && !disableMobileCosmic && (
         <CosmicCanvas
           route={route}
           phase={phase}
