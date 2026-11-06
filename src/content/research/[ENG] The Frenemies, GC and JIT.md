@@ -22,8 +22,8 @@ copyright: |
 # The PoC
 
 <video controls muted playsinline preload="metadata">
-  <source src="/articles/the-frenemies-gc-and-jit/poc-compressed.mp4" type="video/mp4">
-  <a href="/articles/the-frenemies-gc-and-jit/poc-compressed.mp4">Download the PoC video</a>
+  <source src="/img/articles/the-frenemies-gc-and-jit/poc-compressed.mp4" type="video/mp4">
+  <a href="/img/articles/the-frenemies-gc-and-jit/poc-compressed.mp4">Download the PoC video</a>
 </video>
 
 # The Premise
