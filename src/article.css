@@ -625,6 +625,12 @@ body.is-article-route {
   border-bottom-color: currentColor;
 }
 
+.article-post-content a[data-footnote-ref],
+.article-post-content a[data-footnote-ref]:hover {
+  border-bottom: 0;
+  text-decoration: none;
+}
+
 .article-post-content hr {
   height: 1px;
   margin: 0 0 28px;
